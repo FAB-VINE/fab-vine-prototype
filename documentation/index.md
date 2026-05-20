@@ -1,4 +1,4 @@
 # Fab Vine prototype documentation
 
-Esta página es un index para la futura documentación que acompaña al proyecto, esta debe servir de manual para el usuario y personas que desen contribuir o replicar el proyecto
+This page is the index for future documentation, that will be developed alongside the project. This should be a user manual and help people who wish to contribute or replicate the project.
 

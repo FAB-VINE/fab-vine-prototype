@@ -1,14 +1,21 @@
 # fab-vine-prototype
+[![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 
-Repositorio para los archivos del prototipo fab-vine, incluye ideas, diseños, código y documentación. Es un proyecto en desarrollo
 
+Repository for the fab-vine prototype, includes ideas, design files, source code and documentation. This is a project under development 
 
-## Documentación 
+## Documentation  
 
-Este proyecto se documenta principalmente usando markdown, accesible en la carpeta [documentation/](documentation). 
+This project is documented mainly using markdown, accessible in the folder [documentation/](documentation). 
 
-Revisar el index de la documentación para mayor información [inicio documentación](documentation/index.md)
+Please check the docs index to get started: [docs - index](documentation/index.md)
 
 ## License
 
-This project is released under the [Licence]. See more details in the [LICENSE.md](LICENSE.md)  
+This work is licensed under [Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc]
+
+[![CC BY-NC 4.0][cc-by-nc-image]][cc-by-nc]
+
+[cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
+[cc-by-nc-image]: https://licensebuttons.net/l/by-nc/4.0/88x31.png
+[cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
