@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  background: #030604;
+  color-scheme: light;
+  background: #f7f8f4;
   font-synthesis: none;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -21,11 +21,11 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at top left, rgba(88, 255, 176, 0.12), transparent 34rem),
-    radial-gradient(circle at 78% 12%, rgba(216, 154, 85, 0.11), transparent 28rem),
-    radial-gradient(circle at bottom right, rgba(88, 246, 255, 0.1), transparent 30rem),
-    linear-gradient(135deg, rgba(41, 76, 45, 0.2), transparent 42%),
-    #030604;
+    radial-gradient(circle at top left, rgba(30, 111, 22, 0.11), transparent 34rem),
+    radial-gradient(circle at 78% 12%, rgba(90, 46, 166, 0.1), transparent 28rem),
+    radial-gradient(circle at bottom right, rgba(22, 75, 160, 0.1), transparent 30rem),
+    linear-gradient(135deg, rgba(238, 242, 245, 0.95), transparent 42%),
+    #f7f8f4;
 }
 
 * {
@@ -45,9 +45,9 @@ body::before {
   content: '';
   opacity: 0.23;
   background-image:
-    linear-gradient(115deg, transparent 0 44%, rgba(216, 154, 85, 0.14) 44.2% 44.5%, transparent 44.8%),
-    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1.4px);
+    linear-gradient(115deg, transparent 0 44%, rgba(30, 111, 22, 0.16) 44.2% 44.5%, transparent 44.8%),
+    radial-gradient(circle at 22% 18%, rgba(22, 75, 160, 0.2) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 72%, rgba(90, 46, 166, 0.18) 0 1px, transparent 1.4px);
   background-size: 180px 180px, 22px 22px, 31px 31px;
   mix-blend-mode: screen;
 }
@@ -60,27 +60,27 @@ body::after {
   content: '';
   opacity: 0.12;
   background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 3px),
-    radial-gradient(circle at center, transparent 0, rgba(0, 0, 0, 0.52) 78%);
+    repeating-linear-gradient(0deg, rgba(7, 16, 25, 0.05) 0 1px, transparent 1px 3px),
+    radial-gradient(circle at center, transparent 0, rgba(7, 16, 25, 0.08) 78%);
 }
 
 ::selection {
-  background: rgba(88, 255, 176, 0.35);
-  color: white;
+  background: rgba(30, 111, 22, 0.2);
+  color: #071019;
 }
 
 .title-glow {
   text-shadow:
-    0 0 16px rgba(88, 255, 176, 0.35),
-    0 0 46px rgba(88, 246, 255, 0.18),
-    0 0 92px rgba(216, 154, 85, 0.12);
+    0 0 1px rgba(7, 16, 25, 0.14),
+    0 16px 48px rgba(22, 75, 160, 0.15),
+    0 0 72px rgba(30, 111, 22, 0.12);
 }
 
 .analog-panel {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
-    radial-gradient(circle at top right, rgba(216, 154, 85, 0.12), transparent 18rem),
-    rgba(3, 6, 4, 0.62);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(238, 242, 245, 0.76)),
+    radial-gradient(circle at top right, rgba(90, 46, 166, 0.08), transparent 18rem),
+    rgba(255, 255, 255, 0.86);
 }
 
 .analog-panel::before {
@@ -90,27 +90,27 @@ body::after {
   content: '';
   opacity: 0.22;
   background:
-    linear-gradient(90deg, transparent 0 48%, rgba(88, 255, 176, 0.2) 48.2% 48.4%, transparent 48.6%),
-    repeating-linear-gradient(135deg, rgba(216, 154, 85, 0.12) 0 1px, transparent 1px 12px);
+    linear-gradient(90deg, transparent 0 48%, rgba(30, 111, 22, 0.18) 48.2% 48.4%, transparent 48.6%),
+    repeating-linear-gradient(135deg, rgba(22, 75, 160, 0.1) 0 1px, transparent 1px 12px);
   mask-image: linear-gradient(to bottom, black, transparent 84%);
 }
 
 .leaf-circuit {
   position: absolute;
   inset: 11%;
-  border: 1px solid rgba(88, 255, 176, 0.18);
+  border: 1px solid rgba(30, 111, 22, 0.24);
   border-radius: 62% 38% 58% 42% / 48% 58% 42% 52%;
   transform: rotate(-18deg);
   box-shadow:
-    inset 0 0 32px rgba(88, 255, 176, 0.08),
-    0 0 42px rgba(216, 154, 85, 0.08);
+    inset 0 0 32px rgba(30, 111, 22, 0.1),
+    0 0 42px rgba(90, 46, 166, 0.08);
 }
 
 .leaf-circuit::before,
 .leaf-circuit::after {
   position: absolute;
   content: '';
-  background: linear-gradient(90deg, transparent, rgba(88, 255, 176, 0.5), rgba(216, 154, 85, 0.36), transparent);
+  background: linear-gradient(90deg, transparent, rgba(30, 111, 22, 0.56), rgba(22, 75, 160, 0.42), rgba(90, 46, 166, 0.34), transparent);
 }
 
 .leaf-circuit::before {
