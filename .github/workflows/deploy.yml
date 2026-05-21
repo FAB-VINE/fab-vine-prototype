@@ -27,17 +27,20 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: BRAIN-SERVER/dashboard/package-lock.json
 
       - name: Install dependencies
+        working-directory: BRAIN-SERVER/dashboard
         run: npm ci
 
       - name: Build
+        working-directory: BRAIN-SERVER/dashboard
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: BRAIN-SERVER/dashboard/dist
 
   deploy:
     environment:
