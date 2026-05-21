@@ -1,18 +1,23 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity,
+  ArrowRight,
+  Box,
+  Cloud,
   Cpu,
   Github,
-  Globe2,
-  Instagram,
+  Heart,
   Leaf,
   Lightbulb,
+  Mic,
   Network,
   Radio,
   Send,
   Sparkles,
   Users,
   Waves,
+  Wifi,
   Zap,
 } from 'lucide-react';
 import NetworkBackground from './components/NetworkBackground.jsx';
@@ -33,28 +38,46 @@ const stagger = {
 
 const pillars = [
   'Digital fabrication',
-  'IoT devices',
+  'Embedded electronics',
   'Sensor networks',
   'Community participation',
   'Real-time visualization',
   'Open-source collaboration',
 ];
 
-const milestones = [
-  ['01', 'Prototype nodes', 'Fabricated leaves, light behaviors, and sensor inputs.'],
-  ['02', 'Network rituals', 'Shared participation moments across labs and local spaces.'],
-  ['03', 'FAB26 activation', 'A living installation presented in Cambridge/MIT in 2026.'],
+const spiralSteps = [
+  {
+    number: '1',
+    title: 'Module development',
+    subtitle: 'For the event',
+    result: 'Modular, scalable, and ready to deploy.',
+    text: 'Fab leaf modules are designed and fabricated with light, sensing, and structural connection in mind.',
+  },
+  {
+    number: '2',
+    title: 'Tree installation',
+    subtitle: 'Boston / FAB26 MIT',
+    result: 'A living installation that visualizes collective behavior.',
+    text: 'Modules are assembled into a shared structure where local interaction becomes swarm-like light behavior.',
+  },
+  {
+    number: '3',
+    title: 'Modules travel',
+    subtitle: 'The project lives on',
+    result: 'A distributed network that continues to evolve.',
+    text: 'Participants take modules back to their countries, keeping Fab Vine active across the global Fab Lab community.',
+  },
 ];
 
 const technologies = [
-  ['ESP32', Cpu],
-  ['MQTT', Radio],
-  ['Distributed networks', Network],
-  ['Sensors', Activity],
-  ['LEDs', Lightbulb],
-  ['Open-source hardware', Github],
-  ['Real-time data', Waves],
-  ['Fabrication systems', Zap],
+  ['Seeed XIAO ESP32-C6', Cpu],
+  ['MQTT + WiFi', Wifi],
+  ['WS2812B LEDs', Lightbulb],
+  ['Audio + motion sensors', Mic],
+  ['I2C communication', Radio],
+  ['Fab.Cloud swarm engine', Cloud],
+  ['Distributed nodes', Network],
+  ['Digital fabrication systems', Box],
 ];
 
 const audiences = ['Fab Labs', 'Makers', 'Designers', 'Engineers', 'Artists', 'Students', 'Researchers'];
@@ -92,12 +115,15 @@ function Hero() {
         initial="hidden"
         animate="visible"
         variants={stagger}
-        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]"
+        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]"
       >
         <div>
           <motion.div variants={fadeUp} className="mb-6 flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-vine-green/30 bg-vine-green/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-vine-mint">
-              FAB26 / Cambridge / MIT
+              Tree of Connection / FAB26 MIT
+            </span>
+            <span className="rounded-full border border-vine-cyan/25 bg-vine-cyan/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-vine-cyan">
+              Living prototype
             </span>
           </motion.div>
 
@@ -113,9 +139,9 @@ function Hero() {
           </motion.p>
 
           <motion.p variants={fadeUp} className="mt-6 max-w-2xl text-base leading-8 text-white/68 md:text-lg">
-            Fab Vine is a distributed interactive installation that transforms real-world activity into light, behavior,
-            and collective expression. Built with connected fabrication nodes, sensors, and open technologies, the project
-            invites the global Fab Lab network to become part of a shared living system during FAB26 at MIT.
+            Fab Vine turns modular fabricated leaves into a distributed sensing network. Local sound, motion, web
+            interaction, and remote Fab Lab activity are processed through a swarm engine and translated into light,
+            behavior, and collective expression.
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -123,18 +149,20 @@ function Hero() {
               Join the Community
               <Send className="h-4 w-4" />
             </a>
-            <a href="#about" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 font-semibold text-white backdrop-blur transition hover:-translate-y-0.5 hover:border-vine-cyan/60 hover:text-vine-cyan">
-              Explore the Project
+            <a href="#methodology" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 font-semibold text-white backdrop-blur transition hover:-translate-y-0.5 hover:border-vine-cyan/60 hover:text-vine-cyan">
+              Explore the Spiral
               <Network className="h-4 w-4" />
             </a>
           </motion.div>
         </div>
 
-        <motion.div variants={fadeUp} className="relative mx-auto aspect-square w-full max-w-[520px]">
-          <div className="absolute inset-6 rounded-full border border-vine-green/20 bg-vine-green/[0.03] shadow-glow" />
-          <div className="absolute inset-16 rounded-full border border-vine-cyan/25" />
+        <motion.div variants={fadeUp} className="relative mx-auto aspect-square w-full max-w-[540px]">
+          <div className="absolute inset-4 rounded-[2rem] border border-vine-green/20 bg-vine-green/[0.03] shadow-glow" />
+          <div className="absolute inset-12 rounded-full border border-vine-cyan/25" />
           <div className="vine-orbit absolute inset-0 rounded-full border border-dashed border-white/10" />
-          <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-vine-green/40 bg-vine-green/10 shadow-glow" />
+          <div className="absolute left-1/2 top-1/2 grid h-32 w-32 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[1.7rem] border border-vine-green/40 bg-vine-green/10 shadow-glow">
+            <Leaf className="h-12 w-12 text-vine-green" />
+          </div>
           {Array.from({ length: 12 }).map((_, index) => {
             const angle = (index / 12) * Math.PI * 2;
             const x = 50 + Math.cos(angle) * 41;
@@ -148,11 +176,11 @@ function Hero() {
             );
           })}
           <div className="absolute bottom-8 left-8 right-8 rounded-lg border border-white/10 bg-black/35 p-4 font-mono text-xs text-white/70 backdrop-blur">
-            <div className="mb-2 text-vine-green">network.status</div>
+            <div className="mb-2 text-vine-green">fab.cloud/swarm_engine</div>
             <div className="grid grid-cols-3 gap-3">
-              <span>nodes_128</span>
-              <span>labs_34</span>
-              <span>signals_live</span>
+              <span>sound</span>
+              <span>motion</span>
+              <span>light_rules</span>
             </div>
           </div>
         </motion.div>
@@ -169,14 +197,14 @@ function About() {
         <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           <motion.div variants={fadeUp}>
             <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-6xl">
-              A fabricated organism made of people, places, and signals.
+              A fabricated organism made of modules, people, and signals.
             </h2>
             <p className="mt-6 text-lg leading-8 text-white/66">
-              Fab Vine combines digital fabrication, physical computing, and collective participation into a responsive
-              installation. Each node acts like a digital leaf connected to a larger living organism.
+              Fab Vine combines modular fabrication, embedded electronics, biomaterial-inspired forms, and community
+              participation. Each node acts like a digital leaf connected to a larger living organism.
             </p>
             <p className="mt-4 font-mono text-sm text-vine-cyan/80">
-              Red viva de fabricación, datos y conexión humana.
+              Red viva de fabricacion, datos y conexion humana.
             </p>
           </motion.div>
           <motion.div variants={stagger} className="grid gap-4 sm:grid-cols-2">
@@ -184,6 +212,50 @@ function About() {
               <GlowCard key={item}>
                 <Leaf className="mb-5 h-7 w-7 text-vine-green" />
                 <h3 className="font-display text-xl font-semibold text-white">{item}</h3>
+              </GlowCard>
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+function SpiralMethodology() {
+  return (
+    <section id="methodology" className="relative overflow-hidden px-5 py-24 sm:px-8 lg:px-12">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(88,255,176,0.1),transparent_32%),radial-gradient(circle_at_80%_60%,rgba(120,80,255,0.13),transparent_34%)]" />
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger} className="relative mx-auto max-w-7xl">
+        <SectionLabel>Spiral methodology</SectionLabel>
+        <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+          <motion.div variants={fadeUp}>
+            <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-6xl">
+              The cycle continues beyond the event.
+            </h2>
+            <p className="mt-6 text-lg leading-8 text-white/66">
+              Inspired by the MIT presentation, Fab Vine evolves through a spiral process: fabricate modules, activate
+              the tree at FAB26, then let modules travel back into the world as distributed Fab Lab nodes.
+            </p>
+            <div className="mt-8 rounded-lg border border-vine-green/20 bg-vine-green/[0.06] p-5 font-mono text-sm text-vine-mint">
+              Sense locally <ArrowRight className="mx-2 inline h-4 w-4" /> share globally
+              <ArrowRight className="mx-2 inline h-4 w-4" /> act collectively
+              <ArrowRight className="mx-2 inline h-4 w-4" /> keep the community alive
+            </div>
+          </motion.div>
+
+          <motion.div variants={stagger} className="grid gap-4 lg:grid-cols-3">
+            {spiralSteps.map((step) => (
+              <GlowCard key={step.number} className="min-h-[360px]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-white/10 font-display text-3xl font-semibold text-vine-green">
+                  {step.number}
+                </div>
+                <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-vine-cyan">{step.subtitle}</p>
+                <h3 className="mt-3 font-display text-2xl font-semibold text-white">{step.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-white/60">{step.text}</p>
+                <div className="mt-6 rounded-lg border border-white/10 bg-black/25 p-4">
+                  <div className="font-mono text-xs uppercase tracking-[0.18em] text-vine-green">Result</div>
+                  <p className="mt-2 text-sm leading-6 text-white/72">{step.result}</p>
+                </div>
               </GlowCard>
             ))}
           </motion.div>
@@ -207,26 +279,94 @@ function Fab26() {
             <div>
               <h2 className="font-display text-4xl font-semibold text-white">Cambridge / MIT 2026</h2>
               <p className="mt-5 leading-7 text-white/65">
-                Fab Vine will be developed and presented during FAB26, connecting local activation with the global Fab Lab movement.
+                Fab Vine will be assembled as a collective Tree of Connection during FAB26, turning physical presence
+                and digital inputs into live behavior.
               </p>
             </div>
           </GlowCard>
           <motion.div variants={stagger} className="grid gap-4 md:grid-cols-3">
-            {milestones.map(([number, title, text]) => (
-              <GlowCard key={title}>
-                <div className="font-mono text-sm text-vine-green">{number}</div>
-                <h3 className="mt-8 font-display text-2xl font-semibold text-white">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-white/60">{text}</p>
+            {spiralSteps.map((step) => (
+              <GlowCard key={step.title}>
+                <div className="font-mono text-sm text-vine-green">0{step.number}</div>
+                <h3 className="mt-8 font-display text-2xl font-semibold text-white">{step.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-white/60">{step.result}</p>
               </GlowCard>
             ))}
           </motion.div>
         </div>
         <motion.p variants={fadeUp} className="mt-10 max-w-4xl text-2xl leading-snug text-white/78">
-          “Fab Vine is an open invitation to the global Fab Lab community to collaboratively build the next generation of
-          connected creative ecosystems.”
+          "Fab Vine is an open invitation to the global Fab Lab community to collaboratively build the next generation of
+          connected creative ecosystems."
         </motion.p>
       </motion.div>
     </section>
+  );
+}
+
+function SignalSimulator() {
+  const [localActivity, setLocalActivity] = useState(62);
+  const [webInput, setWebInput] = useState(38);
+  const [remoteLabs, setRemoteLabs] = useState(74);
+  const swarm = Math.round(localActivity * 0.45 + webInput * 0.2 + remoteLabs * 0.35);
+  const colorShift = Math.round((webInput + remoteLabs) / 2);
+
+  return (
+    <GlowCard className="lg:col-span-2">
+      <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div>
+          <div className="font-mono text-xs uppercase tracking-[0.2em] text-vine-green">Interactive behavior console</div>
+          <h3 className="mt-4 font-display text-3xl font-semibold text-white">Test the swarm engine logic.</h3>
+          <p className="mt-4 leading-7 text-white/62">
+            Move the signal inputs to see how local interaction, website participation, and remote Fab Labs could shape
+            the installation behavior.
+          </p>
+          {[
+            ['Local sound + motion', localActivity, setLocalActivity],
+            ['Website interaction', webInput, setWebInput],
+            ['Remote Fab Lab activity', remoteLabs, setRemoteLabs],
+          ].map(([label, value, setter]) => (
+            <label key={label} className="mt-5 block">
+              <span className="mb-2 flex justify-between font-mono text-xs uppercase tracking-[0.16em] text-white/45">
+                {label}
+                <span className="text-vine-cyan">{value}%</span>
+              </span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={value}
+                onChange={(event) => setter(Number(event.target.value))}
+                className="w-full accent-vine-green"
+              />
+            </label>
+          ))}
+        </div>
+        <div className="relative min-h-80 overflow-hidden rounded-lg border border-white/10 bg-black/25 p-6">
+          <div
+            className="absolute inset-8 rounded-full blur-3xl transition duration-500"
+            style={{ background: `rgba(${88 + colorShift}, 255, ${176 + Math.round(colorShift / 2)}, ${0.08 + swarm / 700})` }}
+          />
+          <div className="relative grid h-full place-items-center">
+            <div className="relative h-56 w-56">
+              <div className="absolute inset-0 rounded-full border border-vine-green/20" />
+              <div className="absolute inset-8 rounded-full border border-vine-cyan/30" />
+              <div
+                className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-vine-green/40 bg-vine-green/10 text-center shadow-glow transition-all duration-500"
+                style={{ width: `${96 + swarm}px`, height: `${96 + swarm}px` }}
+              >
+                <span className="font-display text-4xl font-semibold text-white">{swarm}</span>
+                <span className="font-mono text-xs uppercase tracking-[0.16em] text-vine-green">swarm</span>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-3 font-mono text-xs text-white/56">
+              <span>capture</span>
+              <span>normalize</span>
+              <span>light rules</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </GlowCard>
   );
 }
 
@@ -234,15 +374,16 @@ function Technology() {
   return (
     <section id="technology" className="px-5 py-24 sm:px-8 lg:px-12">
       <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger} className="mx-auto max-w-7xl">
-        <SectionLabel>Technology stack</SectionLabel>
+        <SectionLabel>Technology and interaction</SectionLabel>
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <h2 className="max-w-3xl font-display text-4xl font-semibold leading-tight text-white md:text-6xl">
-            Open systems for a responsive global installation.
+            From leaf node inputs to color-coded swarm behavior.
           </h2>
           <div className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 font-mono text-xs text-white/60">
-            live_counter: <span className="text-vine-green">contributors + nodes pending</span>
+            engine: <span className="text-vine-green">capture / normalize / calculate / generate</span>
           </div>
         </div>
+
         <motion.div variants={stagger} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {technologies.map(([name, Icon]) => (
             <GlowCard key={name} className="min-h-44">
@@ -250,6 +391,7 @@ function Technology() {
               <h3 className="mt-10 font-display text-xl font-semibold text-white">{name}</h3>
             </GlowCard>
           ))}
+          <SignalSimulator />
         </motion.div>
       </motion.div>
     </section>
@@ -263,10 +405,11 @@ function Join() {
         <motion.div variants={fadeUp}>
           <SectionLabel>Join the community</SectionLabel>
           <h2 className="font-display text-4xl font-semibold leading-tight text-white md:text-6xl">
-            Bring your lab, craft, code, questions, and imagination.
+            Build a module. Host a node. Keep the network alive.
           </h2>
           <p className="mt-6 text-lg leading-8 text-white/66">
-            Contributors will help shape the installation, hardware, software, interaction systems, and global experience.
+            Contributors will help shape the installation, hardware, software, interaction systems, module library, and
+            post-event global experience.
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             {audiences.map((audience) => (
@@ -306,7 +449,7 @@ function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="font-display text-2xl font-semibold text-white">Fab Vine</div>
-          <div className="mt-2 font-mono text-sm text-vine-green">“Grow the network.”</div>
+          <div className="mt-2 font-mono text-sm text-vine-green">"Grow the network."</div>
         </div>
         <nav className="flex flex-wrap gap-4 text-sm text-white/58">
           <a className="transition hover:text-vine-green" href="https://github.com/FAB-VINE" target="_blank" rel="noreferrer">GitHub</a>
@@ -324,6 +467,7 @@ export default function App() {
     <main className="min-h-screen overflow-hidden bg-vine-black text-white">
       <Hero />
       <About />
+      <SpiralMethodology />
       <Fab26 />
       <Technology />
       <Join />
