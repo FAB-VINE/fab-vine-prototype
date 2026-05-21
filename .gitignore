@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build outputs
+BUILD-FILES/pcb-designs/*/build/
+NODE-LOGIC/*/build/
+
+# IDE
+.vscode/
+.idea/

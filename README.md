@@ -6,9 +6,9 @@ Repository for the fab-vine prototype, includes ideas, design files, source code
 
 ## Documentation  
 
-This project is documented mainly using markdown, accessible in the folder [documentation/](documentation). 
+This project is documented mainly using markdown, accessible in the folder [MANUALS/](MANUALS). 
 
-Please check the docs index to get started: [docs - index](documentation/index.md)
+Please check the project info index to get started: [PROJECT-INFO - readme](PROJECT-INFO/README.md)
 
 ## License
 
