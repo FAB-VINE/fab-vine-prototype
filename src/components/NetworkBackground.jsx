@@ -29,8 +29,8 @@ export default function NetworkBackground() {
     const draw = () => {
       context.clearRect(0, 0, window.innerWidth, window.innerHeight);
       const gradient = context.createLinearGradient(0, 0, window.innerWidth, window.innerHeight);
-      gradient.addColorStop(0, 'rgba(30,111,22,0.72)');
-      gradient.addColorStop(0.48, 'rgba(22,75,160,0.58)');
+      gradient.addColorStop(0, 'rgba(21,93,18,0.78)');
+      gradient.addColorStop(0.48, 'rgba(13,63,143,0.66)');
       gradient.addColorStop(1, 'rgba(90,46,166,0.48)');
 
       particles.forEach((particle, index) => {
@@ -43,7 +43,7 @@ export default function NetworkBackground() {
         if (particle.y < 0 || particle.y > window.innerHeight) particle.vy *= -1;
 
         context.beginPath();
-        context.fillStyle = index % 5 === 0 ? 'rgba(90,46,166,0.68)' : index % 3 === 0 ? 'rgba(30,111,22,0.72)' : 'rgba(22,75,160,0.58)';
+        context.fillStyle = index % 5 === 0 ? 'rgba(90,46,166,0.7)' : index % 3 === 0 ? 'rgba(21,93,18,0.78)' : 'rgba(13,63,143,0.66)';
         context.shadowBlur = index % 5 === 0 ? 9 : 14;
         context.shadowColor = context.fillStyle;
         context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
