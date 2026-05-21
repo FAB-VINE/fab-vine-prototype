@@ -145,7 +145,7 @@ function Hero() {
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a href="#join" className="inline-flex items-center justify-center gap-2 rounded-full bg-vine-green px-6 py-3 font-semibold text-vine-black shadow-glow transition hover:-translate-y-0.5 hover:bg-vine-mint">
+            <a href="#join" className="inline-flex items-center justify-center gap-2 rounded-full bg-vine-green px-6 py-3 font-semibold text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-vine-deepGreen">
               Join the Community
               <Send className="h-4 w-4" />
             </a>
