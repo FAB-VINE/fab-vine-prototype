@@ -149,7 +149,7 @@ function Hero() {
               Join the Community
               <Send className="h-4 w-4" />
             </a>
-            <a href="#methodology" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/80 px-6 py-3 font-semibold text-slate-950 backdrop-blur transition hover:-translate-y-0.5 hover:border-vine-cyan/60 hover:text-vine-cyan">
+            <a href="#methodology" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/80 px-6 py-3 font-semibold text-slate-950 backdrop-blur transition hover:-translate-y-0.5 hover:border-vine-blue/60 hover:text-vine-blue">
               Explore the Spiral
               <Network className="h-4 w-4" />
             </a>
@@ -171,7 +171,7 @@ function Hero() {
             return (
               <span
                 key={index}
-                className={index % 4 === 0 ? 'absolute h-3 w-3 rounded-full bg-vine-purple shadow-cyanGlow' : 'absolute h-3 w-3 rounded-full bg-vine-cyan shadow-cyanGlow'}
+                className={index % 4 === 0 ? 'absolute h-3 w-3 rounded-full bg-vine-purple shadow-cyanGlow' : 'absolute h-3 w-3 rounded-full bg-vine-blue shadow-cyanGlow'}
                 style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${index * 0.2}s` }}
               />
             );
@@ -204,14 +204,14 @@ function About() {
               Fab Vine combines modular fabrication, embedded electronics, biomaterial-inspired forms, and community
               participation. Each node acts like a digital leaf connected to a larger living organism.
             </p>
-            <p className="mt-4 font-mono text-sm text-vine-cyan/80">
+            <p className="mt-4 font-mono text-sm text-vine-blue">
               Red viva de fabricacion, datos y conexion humana.
             </p>
           </motion.div>
           <motion.div variants={stagger} className="grid gap-4 sm:grid-cols-2">
             {pillars.map((item) => (
               <GlowCard key={item}>
-                <Leaf className="mb-5 h-7 w-7 text-vine-green" />
+                <Leaf className="mb-5 h-7 w-7 text-vine-deepGreen" />
                 <h3 className="font-display text-xl font-semibold text-slate-950">{item}</h3>
               </GlowCard>
             ))}
@@ -250,7 +250,7 @@ function SpiralMethodology() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-300 bg-white/80 font-display text-3xl font-semibold text-vine-green">
                   {step.number}
                 </div>
-                <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-vine-cyan">{step.subtitle}</p>
+                <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-vine-blue">{step.subtitle}</p>
                 <h3 className="mt-3 font-display text-2xl font-semibold text-slate-950">{step.title}</h3>
                 <p className="mt-4 text-sm leading-7 text-slate-600">{step.text}</p>
                 <div className="mt-6 rounded-lg border border-slate-200 bg-white/75 p-4">
@@ -329,7 +329,7 @@ function SignalSimulator() {
             <label key={label} className="mt-5 block">
               <span className="mb-2 flex justify-between font-mono text-xs uppercase tracking-[0.16em] text-slate-500">
                 {label}
-                <span className="text-vine-cyan">{value}%</span>
+                <span className="text-vine-blue">{value}%</span>
               </span>
               <input
                 type="range"
@@ -350,7 +350,7 @@ function SignalSimulator() {
           <div className="relative grid h-full place-items-center">
             <div className="relative h-56 w-56">
               <div className="absolute inset-0 rounded-full border border-vine-green/20" />
-              <div className="absolute inset-8 rounded-full border border-vine-cyan/30" />
+              <div className="absolute inset-8 rounded-full border border-vine-blue/35" />
               <div
                 className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-vine-green/40 bg-vine-green/10 text-center shadow-glow transition-all duration-500"
                 style={{ width: `${96 + swarm}px`, height: `${96 + swarm}px` }}
@@ -388,7 +388,7 @@ function Technology() {
         <motion.div variants={stagger} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {technologies.map(([name, Icon]) => (
             <GlowCard key={name} className="min-h-44">
-              <Icon className="h-7 w-7 text-vine-cyan" />
+              <Icon className="h-7 w-7 text-vine-blue" />
               <h3 className="mt-10 font-display text-xl font-semibold text-slate-950">{name}</h3>
             </GlowCard>
           ))}
