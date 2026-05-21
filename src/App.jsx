@@ -95,11 +95,11 @@ function GlowCard({ children, className = '' }) {
   return (
     <motion.div
       variants={fadeUp}
-      className={`group relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-6 shadow-glow backdrop-blur ${className}`}
+      className={`analog-panel group relative overflow-hidden rounded-lg border border-white/10 p-6 shadow-analog backdrop-blur ${className}`}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-vine-green/80 to-transparent opacity-70" />
-      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-vine-cyan/10 blur-2xl transition duration-500 group-hover:bg-vine-green/20" />
-      {children}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-vine-copper/70 via-vine-green/80 to-transparent opacity-80" />
+      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-vine-copper/10 blur-2xl transition duration-500 group-hover:bg-vine-green/20" />
+      <div className="relative z-10">{children}</div>
     </motion.div>
   );
 }
@@ -122,7 +122,7 @@ function Hero() {
             <span className="rounded-full border border-vine-green/30 bg-vine-green/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-vine-mint">
               Tree of Connection / FAB26 MIT
             </span>
-            <span className="rounded-full border border-vine-cyan/25 bg-vine-cyan/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-vine-cyan">
+            <span className="rounded-full border border-vine-copper/30 bg-vine-copper/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-vine-copper">
               Living prototype
             </span>
           </motion.div>
@@ -158,10 +158,11 @@ function Hero() {
 
         <motion.div variants={fadeUp} className="relative mx-auto aspect-square w-full max-w-[540px]">
           <div className="absolute inset-4 rounded-[2rem] border border-vine-green/20 bg-vine-green/[0.03] shadow-glow" />
-          <div className="absolute inset-12 rounded-full border border-vine-cyan/25" />
+          <div className="leaf-circuit" />
+          <div className="absolute inset-12 rounded-full border border-vine-copper/25" />
           <div className="vine-orbit absolute inset-0 rounded-full border border-dashed border-white/10" />
-          <div className="absolute left-1/2 top-1/2 grid h-32 w-32 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[1.7rem] border border-vine-green/40 bg-vine-green/10 shadow-glow">
-            <Leaf className="h-12 w-12 text-vine-green" />
+          <div className="absolute left-1/2 top-1/2 grid h-32 w-32 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[1.7rem] border border-vine-green/40 bg-vine-moss/25 shadow-glow">
+            <Leaf className="h-12 w-12 text-vine-mint" />
           </div>
           {Array.from({ length: 12 }).map((_, index) => {
             const angle = (index / 12) * Math.PI * 2;
@@ -170,12 +171,12 @@ function Hero() {
             return (
               <span
                 key={index}
-                className="absolute h-3 w-3 rounded-full bg-vine-cyan shadow-cyanGlow"
+                className={index % 4 === 0 ? 'absolute h-3 w-3 rounded-full bg-vine-copper shadow-cyanGlow' : 'absolute h-3 w-3 rounded-full bg-vine-cyan shadow-cyanGlow'}
                 style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${index * 0.2}s` }}
               />
             );
           })}
-          <div className="absolute bottom-8 left-8 right-8 rounded-lg border border-white/10 bg-black/35 p-4 font-mono text-xs text-white/70 backdrop-blur">
+          <div className="absolute bottom-8 left-8 right-8 rounded-lg border border-vine-copper/15 bg-black/40 p-4 font-mono text-xs text-white/70 backdrop-blur">
             <div className="mb-2 text-vine-green">fab.cloud/swarm_engine</div>
             <div className="grid grid-cols-3 gap-3">
               <span>sound</span>
@@ -236,7 +237,7 @@ function SpiralMethodology() {
               Inspired by the MIT presentation, Fab Vine evolves through a spiral process: fabricate modules, activate
               the tree at FAB26, then let modules travel back into the world as distributed Fab Lab nodes.
             </p>
-            <div className="mt-8 rounded-lg border border-vine-green/20 bg-vine-green/[0.06] p-5 font-mono text-sm text-vine-mint">
+            <div className="mt-8 rounded-lg border border-vine-copper/20 bg-vine-copper/[0.06] p-5 font-mono text-sm text-vine-mint">
               Sense locally <ArrowRight className="mx-2 inline h-4 w-4" /> share globally
               <ArrowRight className="mx-2 inline h-4 w-4" /> act collectively
               <ArrowRight className="mx-2 inline h-4 w-4" /> keep the community alive
@@ -273,7 +274,7 @@ function Fab26() {
         <SectionLabel>FAB26 Cambridge/MIT</SectionLabel>
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
           <GlowCard className="flex min-h-72 flex-col justify-between">
-            <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-vine-cyan/25 bg-vine-cyan/10 font-mono text-sm uppercase tracking-[0.2em] text-vine-cyan">
+            <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-vine-copper/30 bg-vine-copper/10 font-mono text-sm uppercase tracking-[0.2em] text-vine-copper">
               FAB26
             </div>
             <div>
@@ -314,7 +315,7 @@ function SignalSimulator() {
     <GlowCard className="lg:col-span-2">
       <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-vine-green">Interactive behavior console</div>
+          <div className="font-mono text-xs uppercase tracking-[0.2em] text-vine-copper">Interactive behavior console</div>
           <h3 className="mt-4 font-display text-3xl font-semibold text-white">Test the swarm engine logic.</h3>
           <p className="mt-4 leading-7 text-white/62">
             Move the signal inputs to see how local interaction, website participation, and remote Fab Labs could shape
@@ -341,7 +342,7 @@ function SignalSimulator() {
             </label>
           ))}
         </div>
-        <div className="relative min-h-80 overflow-hidden rounded-lg border border-white/10 bg-black/25 p-6">
+        <div className="relative min-h-80 overflow-hidden rounded-lg border border-vine-copper/15 bg-black/30 p-6">
           <div
             className="absolute inset-8 rounded-full blur-3xl transition duration-500"
             style={{ background: `rgba(${88 + colorShift}, 255, ${176 + Math.round(colorShift / 2)}, ${0.08 + swarm / 700})` }}
@@ -432,7 +433,7 @@ function Join() {
                 />
               </label>
             ))}
-            <button type="button" className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-vine-cyan px-6 py-3 font-semibold text-vine-black transition hover:-translate-y-0.5 hover:bg-white sm:col-span-2">
+            <button type="button" className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-vine-copper px-6 py-3 font-semibold text-vine-black transition hover:-translate-y-0.5 hover:bg-vine-mint sm:col-span-2">
               Register Interest
               <Users className="h-4 w-4" />
             </button>

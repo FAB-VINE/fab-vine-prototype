@@ -30,7 +30,8 @@ export default function NetworkBackground() {
       context.clearRect(0, 0, window.innerWidth, window.innerHeight);
       const gradient = context.createLinearGradient(0, 0, window.innerWidth, window.innerHeight);
       gradient.addColorStop(0, 'rgba(88,255,176,0.9)');
-      gradient.addColorStop(1, 'rgba(88,246,255,0.8)');
+      gradient.addColorStop(0.48, 'rgba(216,154,85,0.65)');
+      gradient.addColorStop(1, 'rgba(88,246,255,0.72)');
 
       particles.forEach((particle, index) => {
         if (!mediaQuery.matches) {
@@ -42,8 +43,8 @@ export default function NetworkBackground() {
         if (particle.y < 0 || particle.y > window.innerHeight) particle.vy *= -1;
 
         context.beginPath();
-        context.fillStyle = index % 3 === 0 ? 'rgba(88,255,176,0.9)' : 'rgba(88,246,255,0.72)';
-        context.shadowBlur = 14;
+        context.fillStyle = index % 5 === 0 ? 'rgba(216,154,85,0.78)' : index % 3 === 0 ? 'rgba(88,255,176,0.86)' : 'rgba(88,246,255,0.62)';
+        context.shadowBlur = index % 5 === 0 ? 9 : 14;
         context.shadowColor = context.fillStyle;
         context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
         context.fill();
@@ -58,8 +59,8 @@ export default function NetworkBackground() {
 
           if (distance < 150) {
             context.strokeStyle = gradient;
-            context.globalAlpha = (1 - distance / 150) * 0.18;
-            context.lineWidth = 1;
+            context.globalAlpha = (1 - distance / 150) * 0.15;
+            context.lineWidth = index % 6 === 0 ? 1.4 : 0.8;
             context.beginPath();
             context.moveTo(first.x, first.y);
             context.lineTo(second.x, second.y);
