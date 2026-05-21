@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #030706;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(88, 255, 176, 0.12), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(88, 246, 255, 0.12), transparent 30rem),
+    #030706;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(88, 255, 176, 0.35);
+  color: white;
+}
+
+.title-glow {
+  text-shadow:
+    0 0 16px rgba(88, 255, 176, 0.35),
+    0 0 46px rgba(88, 246, 255, 0.18);
+}
+
+.vine-orbit {
+  animation: rotate-orbit 26s linear infinite;
+}
+
+.vine-orbit + span,
+.vine-orbit ~ span {
+  animation: node-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes rotate-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: scale(1.28);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
