@@ -60,7 +60,7 @@ export default function NetworkBackground() {
           if (distance < 150) {
             context.strokeStyle = gradient;
             context.globalAlpha = (1 - distance / 150) * 0.15;
-            context.lineWidth = index % 6 === 0 ? 1.4 : 0.8;
+            context.lineWidth = i % 6 === 0 ? 1.4 : 0.8;
             context.beginPath();
             context.moveTo(first.x, first.y);
             context.lineTo(second.x, second.y);

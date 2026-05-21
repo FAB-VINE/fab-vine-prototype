@@ -32,6 +32,11 @@ body {
   box-sizing: border-box;
 }
 
+#root {
+  position: relative;
+  z-index: 1;
+}
+
 body::before {
   position: fixed;
   inset: 0;
