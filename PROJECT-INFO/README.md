@@ -8,13 +8,14 @@ Repository for the Fab Vine prototype, including ideas, design files, source cod
 - [MANUALS/](../MANUALS) - contributor and assembly documentation.
 - [BUILD-FILES/](../BUILD-FILES) - fabrication files, PCB designs, and wiring diagrams.
 - [NODE-LOGIC/](../NODE-LOGIC) - firmware and shared code for physical nodes.
-- [BRAIN-SERVER/](../BRAIN-SERVER) - server, data processing, and public dashboard.
+- [BRAIN-SERVER/](../BRAIN-SERVER) - server and data processing.
+- [LANDING-PAGE/](../LANDING-PAGE) - public Fab Vine website.
 - [SIMULATION/](../SIMULATION) - virtual installation and fake data tools.
 - [LAUNCH-TOOLS/](../LAUNCH-TOOLS) - scripts for flashing, testing, and updates.
 
 ## Public Landing
 
-The public Fab Vine landing page lives in [BRAIN-SERVER/dashboard/](../BRAIN-SERVER/dashboard).
+The public Fab Vine landing page lives in [LANDING-PAGE/](../LANDING-PAGE).
 
 ## License
 

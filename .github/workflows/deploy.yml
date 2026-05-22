@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'LANDING-PAGE/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -27,20 +30,20 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: BRAIN-SERVER/dashboard/package-lock.json
+          cache-dependency-path: LANDING-PAGE/package-lock.json
 
       - name: Install dependencies
-        working-directory: BRAIN-SERVER/dashboard
+        working-directory: LANDING-PAGE
         run: npm ci
 
       - name: Build
-        working-directory: BRAIN-SERVER/dashboard
+        working-directory: LANDING-PAGE
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: BRAIN-SERVER/dashboard/dist
+          path: LANDING-PAGE/dist
 
   deploy:
     environment:

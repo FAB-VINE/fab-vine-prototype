@@ -1,4 +1,4 @@
-# Fab Vine Dashboard
+# Fab Vine Landing Page
 
 This folder contains the public Fab Vine landing page.
 
