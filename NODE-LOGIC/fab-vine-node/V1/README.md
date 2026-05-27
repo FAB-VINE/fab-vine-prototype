@@ -22,6 +22,7 @@ This version is intended to bring together:
 - `modules/leds/` - LED behavior, status lights, and visual feedback.
 - `modules/network/` - WiFi, MQTT, or other communication logic.
 - `assets/oled/` - OLED bitmaps, sprites, icons, and visual assets.
+- `tools/` - local preview utilities for testing expressions before uploading to hardware.
 - `notes/` - test notes, design decisions, and expression behavior ideas.
 
 ## Arduino Sketch
@@ -59,6 +60,14 @@ Current OLED assumptions:
 - SDA pin: `D4`
 - SCL pin: `D5`
 
+Local preview:
+
+```text
+tools/oled-expression-preview.html
+```
+
+Open this file through a local web server to preview OLED expressions before uploading to the physical node.
+
 ## Documentation Notes
 
 When adding a new OLED expression, document:
@@ -68,5 +77,17 @@ When adding a new OLED expression, document:
 - Trigger condition
 - Required bitmap or drawing function
 - Known hardware assumptions
+
+Detailed OLED expression manual:
+
+```text
+modules/oled-expressions/README.md
+```
+
+Browsable HTML manual:
+
+```text
+../../../MANUALS/oled-expressions.html
+```
 
 Nota en espanol: V1 es la primera version del firmware unificado. Todos los nodos deben compartir este firmware base.

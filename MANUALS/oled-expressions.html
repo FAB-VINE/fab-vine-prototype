@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OLED Expressions Manual | Fab Vine</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="../NODE-LOGIC/fab-vine-node/V1/tools/oled-expression-preview.html">OLED Preview</a>
+        <a href="./node-v1.html">Node V1</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Node Logic / V1</div>
+      <h1>OLED Expressions Manual</h1>
+      <p class="lead">
+        The OLED display gives each Fab Vine node a small visible personality. Expressions should
+        communicate state clearly while feeling organic, alive, and readable on a 128x64 screen.
+      </p>
+    </section>
+
+    <div class="content-layout">
+      <aside class="sidebar" aria-label="On this page">
+        <a href="#preview">Preview First</a>
+        <a href="#basic">Basic Idea</a>
+        <a href="#expression-set">Expression Set</a>
+        <a href="#affirmation">Affirmation</a>
+        <a href="#negation">Negation</a>
+        <a href="#loop">Loop Structure</a>
+        <a href="#upload">Arduino Upload</a>
+        <a href="#guidelines">Editing Guidelines</a>
+        <a href="#spanish">Espanol</a>
+      </aside>
+
+      <article class="article">
+        <section id="preview" class="panel section">
+          <h2>Preview First</h2>
+          <p>
+            Before reading the code, look at the expression. The OLED preview is the fastest way to understand
+            what the node will feel like before uploading anything to the physical board.
+          </p>
+          <iframe class="preview-frame" src="../NODE-LOGIC/fab-vine-node/V1/tools/oled-expression-preview.html" title="OLED expression preview"></iframe>
+          <a class="button primary" href="../NODE-LOGIC/fab-vine-node/V1/tools/oled-expression-preview.html">Open Preview Full Screen</a>
+        </section>
+
+        <section id="basic" class="panel section">
+          <h2>Basic Idea</h2>
+          <p>
+            Fab Vine nodes use a tiny OLED screen as a face. The face does not need to explain everything;
+            it only needs to make the node feel responsive and alive.
+          </p>
+          <ul>
+            <li><strong>Yes</strong> is a soft vertical nod: both eyes move up and down.</li>
+            <li><strong>No</strong> is a soft horizontal shake: both eyes move side to side.</li>
+            <li>The pupils stay centered inside the eyes so the gesture feels like head movement, not just looking around.</li>
+          </ul>
+        </section>
+
+        <section id="expression-set" class="panel section">
+          <h2>Current Expression Set</h2>
+          <p>The current firmware cycles through these face states:</p>
+          <ul>
+            <li><code>NORMAL</code> - neutral open eyes with centered pupils.</li>
+            <li><code>BLINK</code> - both eyes briefly closed.</li>
+            <li><code>WINK</code> - one eye closed, one eye open.</li>
+            <li><code>SURPRISED</code> - taller open eyes with centered pupils.</li>
+            <li><code>LOOK_LEFT</code> - both pupils look left.</li>
+            <li><code>LOOK_RIGHT</code> - both pupils look right.</li>
+            <li><code>YES_FACE</code> - affirmation gesture using mobile eyes.</li>
+            <li><code>NO_FACE</code> - negation gesture using mobile eyes.</li>
+          </ul>
+        </section>
+
+        <section id="affirmation" class="panel section">
+          <h2>Affirmation Behavior</h2>
+          <p><code>YES_FACE</code> should feel like a soft nod.</p>
+          <div class="two-col">
+            <div class="callout">
+              <h3>Current Behavior</h3>
+              <ul>
+                <li>Both eyes move vertically.</li>
+                <li>Pupils stay centered inside the moving eyes.</li>
+                <li>The expression updates every <code>220 ms</code>.</li>
+                <li>The full affirmation lasts around <code>2500 ms</code>.</li>
+                <li>After affirmation, the firmware advances to <code>NO_FACE</code>.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <h3>Design Intention</h3>
+              <ul>
+                <li>Use movement instead of checkmark symbols.</li>
+                <li>Keep the face natural and character-like.</li>
+                <li>Make the gesture readable on a small OLED.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="negation" class="panel section">
+          <h2>Negation Behavior</h2>
+          <p><code>NO_FACE</code> should feel like a soft head shake.</p>
+          <div class="two-col">
+            <div class="callout">
+              <h3>Current Behavior</h3>
+              <ul>
+                <li>Both eyes move horizontally from side to side.</li>
+                <li>Pupils stay centered inside each moving eye.</li>
+                <li>The expression updates every <code>220 ms</code>.</li>
+                <li>The full negation lasts around <code>2500 ms</code>.</li>
+                <li>After negation, the firmware returns to <code>NORMAL</code>.</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <h3>Design Intention</h3>
+              <ul>
+                <li>Move the eyes as a unit, not only the pupils.</li>
+                <li>Avoid static X symbols unless a stronger error state is needed.</li>
+                <li>Make the expression natural and less like signage.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="loop" class="panel section">
+          <h2>Timing And Loop Structure</h2>
+          <p>The loop has special handlers for affirmation and negation:</p>
+          <ul>
+            <li><code>updateYesFace()</code> controls <code>YES_FACE</code>.</li>
+            <li><code>updateNoFace()</code> controls <code>NO_FACE</code>.</li>
+            <li><code>nextFace()</code> advances the normal expression sequence.</li>
+            <li><code>returnToNormal()</code> resets the face after the negation cycle.</li>
+          </ul>
+          <div class="callout">
+            <h3>Important Behavior</h3>
+            <p>
+              <code>YES_FACE</code> must call <code>nextFace()</code> when it finishes, so the cycle can continue
+              into <code>NO_FACE</code>. Returning to <code>NORMAL</code> directly from <code>YES_FACE</code> skips
+              <code>NO_FACE</code>.
+            </p>
+          </div>
+        </section>
+
+        <section id="upload" class="panel section">
+          <h2>Arduino Upload Notes</h2>
+          <div class="two-col">
+            <div>
+              <h3>Current Tested Board</h3>
+              <ul>
+                <li>Seeed XIAO ESP32-C6 / ESP32-C6 family board</li>
+                <li>Port used during testing: <code>COM3</code></li>
+                <li>FQBN used for upload: <code>esp32:esp32:XIAO_ESP32C6</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3>OLED Assumptions</h3>
+              <ul>
+                <li>Display: <code>128x64</code></li>
+                <li>Driver: <code>SSD1306</code></li>
+                <li>I2C address: <code>0x3C</code></li>
+                <li>SDA: <code>D4</code></li>
+                <li>SCL: <code>D5</code></li>
+              </ul>
+            </div>
+          </div>
+          <h3>Required Arduino Libraries</h3>
+          <ul>
+            <li><code>Adafruit GFX Library</code></li>
+            <li><code>Adafruit SSD1306</code></li>
+          </ul>
+        </section>
+
+        <section id="guidelines" class="panel section">
+          <h2>Editing Guidelines</h2>
+          <p>When adding or changing an expression:</p>
+          <ul>
+            <li>Name the expression in the <code>Face</code> enum.</li>
+            <li>Add the drawing logic in a dedicated function.</li>
+            <li>Keep movement readable at small OLED scale.</li>
+            <li>Avoid relying on very subtle pupil changes.</li>
+            <li>Update the preview HTML.</li>
+            <li>Compile before upload.</li>
+            <li>Test on the physical OLED.</li>
+            <li>Document the behavior here.</li>
+          </ul>
+        </section>
+
+        <section id="spanish" class="panel section">
+          <h2>Espanol</h2>
+          <p>
+            Este manual documenta las expresiones OLED del nodo Fab Vine V1. La afirmacion usa ojos
+            moviles en vertical, como un gesto de si. La negacion usa ojos moviles en horizontal, como
+            un gesto de no. Las pupilas se mantienen centradas dentro de cada ojo para que el movimiento
+            se vea mas natural.
+          </p>
+          <p>
+            Cuando se cambie una expresion, hay que actualizar tambien el simulador local antes de subir
+            el firmware al Arduino.
+          </p>
+        </section>
+      </article>
+    </div>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>

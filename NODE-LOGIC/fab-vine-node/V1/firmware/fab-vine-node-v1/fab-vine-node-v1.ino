@@ -11,6 +11,7 @@
 #define OLED_ADDRESS 0x3C
 #define SDA_PIN D4
 #define SCL_PIN D5
+#define START_WITH_NO_TEST true
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
@@ -52,7 +53,8 @@ void setup() {
   }
 
   display.clearDisplay();
-  currentFace = NORMAL;
+  currentFace = START_WITH_NO_TEST ? NO_FACE : NORMAL;
+  noDirection = -1;
   faceStart = millis();
   lastChange = millis();
   drawFace();
@@ -114,8 +116,11 @@ void nextFace() {
       break;
 
     case YES_FACE:
-    case NO_FACE:
       duration = 2500;
+      break;
+
+    case NO_FACE:
+      duration = 4000;
       break;
 
     default:
@@ -158,12 +163,12 @@ void updateYesFace() {
   }
 
   if (millis() - faceStart > 2500) {
-    returnToNormal();
+    nextFace();
   }
 }
 
 void updateNoFace() {
-  if (millis() - lastChange > 180) {
+  if (millis() - lastChange > 220) {
     noDirection *= -1;
     drawNoFace();
     lastChange = millis();
@@ -253,6 +258,23 @@ void pupils(int x1, int y1, int x2, int y2) {
   display.fillCircle(x2, y2, 4, SSD1306_BLACK);
 }
 
+void thickLine(int x1, int y1, int x2, int y2) {
+  for (int offset = -2; offset <= 2; offset++) {
+    display.drawLine(x1 + offset, y1, x2 + offset, y2, SSD1306_WHITE);
+    display.drawLine(x1, y1 + offset, x2, y2 + offset, SSD1306_WHITE);
+  }
+}
+
+void xEye(int centerX, int centerY) {
+  thickLine(centerX - 15, centerY - 15, centerX + 15, centerY + 15);
+  thickLine(centerX + 15, centerY - 15, centerX - 15, centerY + 15);
+}
+
+void checkEye(int centerX, int centerY) {
+  thickLine(centerX - 15, centerY, centerX - 5, centerY + 11);
+  thickLine(centerX - 5, centerY + 11, centerX + 17, centerY - 13);
+}
+
 // =====================================
 // Normal
 // =====================================
@@ -318,14 +340,13 @@ void eyesLookRight() {
 
 void drawYesFace() {
   display.clearDisplay();
-  eye(18, 18, 32, 24);
-  eye(78, 18, 32, 24);
 
-  if (yesState) {
-    pupils(34, 24, 94, 24);
-  } else {
-    pupils(34, 36, 94, 36);
-  }
+  int eyeY = yesState ? 13 : 23;
+  int pupilY = yesState ? 25 : 35;
+
+  eye(18, eyeY, 32, 24);
+  eye(78, eyeY, 32, 24);
+  pupils(34, pupilY, 94, pupilY);
 
   display.display();
 }
@@ -336,11 +357,14 @@ void drawYesFace() {
 
 void drawNoFace() {
   display.clearDisplay();
-  eye(18, 18, 32, 24);
-  eye(78, 18, 32, 24);
 
-  int offset = noDirection * 10;
-  pupils(34 + offset, 30, 94 + offset, 30);
+  int eyeShift = noDirection * 5;
+
+  eye(18 + eyeShift, 18, 32, 24);
+  eye(78 + eyeShift, 18, 32, 24);
+
+  display.fillCircle(34 + eyeShift, 30, 5, SSD1306_BLACK);
+  display.fillCircle(94 + eyeShift, 30, 5, SSD1306_BLACK);
 
   display.display();
 }

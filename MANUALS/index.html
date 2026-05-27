@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="#overview">Overview</a>
+        <a href="#areas">Areas</a>
+        <a href="#manuals">Manuals</a>
+        <a href="#workflow">Workflow</a>
+        <a href="./getting-started.html">Start</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">Documentation System</div>
+      <h1>Explore Fab Vine from the system level to the smallest node behavior.</h1>
+      <p class="lead">
+        Start with the big picture, choose an area of the project, then open the specific manual you need.
+        This library is designed to grow with the installation, hardware, firmware, software, and community.
+      </p>
+    </section>
+
+    <section id="overview" class="overview-grid" aria-label="Project overview">
+      <a class="overview-card featured" href="./getting-started.html">
+        <span class="status">Start here</span>
+        <h2>Build Your First Node</h2>
+        <p>Contributor entry point: understand the parts, tools, firmware, testing flow, and first decisions.</p>
+        <span class="meta">MANUALS / getting-started</span>
+      </a>
+
+      <div class="overview-card">
+        <span class="status">Project map</span>
+        <h2>How The System Is Organized</h2>
+        <p>
+          Fab Vine is divided into physical build files, node logic, brain server, simulation, launch tools,
+          manuals, and project information.
+        </p>
+        <span class="meta">Root structure</span>
+      </div>
+    </section>
+
+    <section id="areas" class="section-heading">
+      <div>
+        <div class="eyebrow">General Concepts</div>
+        <h2>Main Project Areas</h2>
+      </div>
+      <p>Each area starts broad, then points to the specific manuals and files that belong there.</p>
+    </section>
+
+    <section class="area-map" aria-label="Project areas">
+      <article class="area-card">
+        <div class="area-number">01</div>
+        <div>
+          <h3>Physical Node</h3>
+          <p>Fabricated parts, electronics, OLED display, sensors, LEDs, wiring, and assembly.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./oled-expressions.html">OLED Expressions</a>
+          <a href="./design-rules.html">Design Rules</a>
+          <a href="./assembly-guides/index.html">Assembly Guides</a>
+        </div>
+      </article>
+
+      <article class="area-card">
+        <div class="area-number">02</div>
+        <div>
+          <h3>Node Logic</h3>
+          <p>Arduino firmware, expression states, sensor behavior, LED behavior, and communication modules.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./node-v1.html">Fab Vine Node V1</a>
+          <a href="../NODE-LOGIC/fab-vine-node/V1/firmware/fab-vine-node-v1/fab-vine-node-v1.ino">Current Firmware</a>
+          <a href="../NODE-LOGIC/fab-vine-node/V1/tools/oled-expression-preview.html">OLED Preview</a>
+        </div>
+      </article>
+
+      <article class="area-card">
+        <div class="area-number">03</div>
+        <div>
+          <h3>Brain Server</h3>
+          <p>Coordinator logic, data processing, dashboards, and the public-facing digital layer.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./brain-server.html">Brain Server Overview</a>
+        </div>
+      </article>
+
+      <article class="area-card">
+        <div class="area-number">04</div>
+        <div>
+          <h3>Simulation</h3>
+          <p>Virtual room tests, fake data, interaction prototypes, and behavior previews before hardware.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./simulation.html">Simulation Overview</a>
+        </div>
+      </article>
+
+      <article class="area-card">
+        <div class="area-number">05</div>
+        <div>
+          <h3>Launch Tools</h3>
+          <p>Flashing, updating, testing, deployment scripts, and repeatable setup for contributors.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./launch-tools.html">Launch Tools Overview</a>
+        </div>
+      </article>
+
+      <article class="area-card">
+        <div class="area-number">06</div>
+        <div>
+          <h3>Community And Project Info</h3>
+          <p>Contribution rules, repo conventions, project purpose, license, and documentation culture.</p>
+        </div>
+        <div class="manual-list">
+          <a href="./community.html">Community Overview</a>
+        </div>
+      </article>
+    </section>
+
+    <section id="manuals" class="section-heading">
+      <div>
+        <div class="eyebrow">Specific Manuals</div>
+        <h2>Current Library</h2>
+      </div>
+      <p>Manuals that already exist and can be opened now.</p>
+    </section>
+
+    <section class="manual-shelf" aria-label="Specific manuals">
+      <a class="manual-row" href="./oled-expressions.html">
+        <span class="status">HTML</span>
+        <div>
+          <h3>OLED Expressions</h3>
+          <p>Face states, yes/no gestures, timing, loop structure, preview workflow, and Arduino upload notes.</p>
+        </div>
+        <span class="meta">NODE-LOGIC / V1</span>
+      </a>
+
+      <a class="manual-row" href="./getting-started.html">
+        <span class="status">HTML</span>
+        <div>
+          <h3>Getting Started</h3>
+          <p>First build path for contributors: parts, tools, fabrication files, electronics, firmware, and testing.</p>
+        </div>
+        <span class="meta">MANUALS</span>
+      </a>
+
+      <a class="manual-row" href="./design-rules.html">
+        <span class="status">HTML</span>
+        <div>
+          <h3>Design Rules</h3>
+          <p>Geometry constraints, connector logic, module scale, material assumptions, and naming rules.</p>
+        </div>
+        <span class="meta">BUILD-FILES</span>
+      </a>
+    </section>
+
+    <section id="workflow" class="panel section">
+      <div class="eyebrow">Documentation Workflow</div>
+      <h2>How New Manuals Should Fit</h2>
+      <p>
+        Add specific documentation near the files it explains, then expose the human-friendly version here.
+        This keeps technical notes close to the work while giving contributors one clear place to explore.
+      </p>
+      <ul>
+        <li>Use <code>MANUALS/index.html</code> as the main exploration menu.</li>
+        <li>Use area cards for broad concepts: physical node, node logic, brain server, simulation, launch tools, and community.</li>
+        <li>Create specific HTML manuals in <code>MANUALS/</code> when they should be readable by non-technical contributors.</li>
+        <li>Keep detailed Markdown near firmware, hardware, or server code when it helps development.</li>
+        <li>Use English as the primary language and Spanish as the secondary support language.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>
