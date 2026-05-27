@@ -36,7 +36,7 @@ unsigned long faceStart = 0;
 unsigned long duration = 1600;
 
 bool yesState = false;
-bool noState = false;
+int noDirection = -1;
 
 // =====================================
 // Setup
@@ -91,7 +91,7 @@ void nextFace() {
   }
 
   if (currentFace == NO_FACE) {
-    noState = false;
+    noDirection = -1;
   }
 
   if (currentFace == BLINK) {
@@ -136,7 +136,7 @@ void triggerYes() {
 
 void triggerNo() {
   currentFace = NO_FACE;
-  noState = false;
+  noDirection = -1;
   faceStart = millis();
   lastChange = millis();
   drawNoFace();
@@ -163,8 +163,8 @@ void updateYesFace() {
 }
 
 void updateNoFace() {
-  if (millis() - lastChange > 220) {
-    noState = !noState;
+  if (millis() - lastChange > 180) {
+    noDirection *= -1;
     drawNoFace();
     lastChange = millis();
   }
@@ -339,11 +339,8 @@ void drawNoFace() {
   eye(18, 18, 32, 24);
   eye(78, 18, 32, 24);
 
-  if (noState) {
-    pupils(24, 30, 84, 30);
-  } else {
-    pupils(44, 30, 104, 30);
-  }
+  int offset = noDirection * 10;
+  pupils(34 + offset, 30, 94 + offset, 30);
 
   display.display();
 }

@@ -45,7 +45,7 @@ The current V1 sketch includes an OLED expression cycle with:
 - Look left
 - Look right
 - Yes motion
-- No motion
+- No motion, with pupils moving side to side
 
 Required Arduino libraries:
 
