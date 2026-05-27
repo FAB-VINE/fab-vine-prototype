@@ -131,6 +131,21 @@ Use this folder for:
 
 Do not place public website code here.
 
+### `NODE-LOGIC/fab-vine-node/`
+
+Unified firmware for the standard Fab Vine node.
+
+Use this folder when all nodes share the same hardware and firmware base. Organize major firmware iterations by version, for example `V1`, `V2`, and `V3`.
+
+Each version should document:
+
+- Target hardware.
+- Arduino board or microcontroller.
+- Required libraries.
+- OLED expression behavior.
+- Sensor, LED, and network modules.
+- How to upload and test the firmware.
+
 ### `NODE-LOGIC/shared-tools/`
 
 Common code used by multiple node types.
