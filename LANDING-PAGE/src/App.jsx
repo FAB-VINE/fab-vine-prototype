@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Activity,
   ArrowRight,
+  BookOpen,
   Box,
   Cloud,
   Cpu,
@@ -152,6 +153,10 @@ function Hero() {
             <a href="#methodology" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/80 px-6 py-3 font-semibold text-slate-950 backdrop-blur transition hover:-translate-y-0.5 hover:border-vine-blue/60 hover:text-vine-blue">
               Explore the Spiral
               <Network className="h-4 w-4" />
+            </a>
+            <a href="/fab-vine-prototype/MANUALS/index.html" className="inline-flex items-center justify-center gap-2 rounded-full border border-vine-purple/35 bg-vine-purple px-6 py-3 font-semibold text-white shadow-cyanGlow transition hover:-translate-y-0.5 hover:bg-vine-blue">
+              Manuals
+              <BookOpen className="h-4 w-4" />
             </a>
           </motion.div>
         </div>
@@ -457,6 +462,7 @@ function Footer() {
           <a className="transition hover:text-vine-green" href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
           <a className="transition hover:text-vine-green" href="https://fabfoundation.org/" target="_blank" rel="noreferrer">Fab Labs</a>
           <a className="transition hover:text-vine-green" href="#fab26">FAB26</a>
+          <a className="transition hover:text-vine-green" href="/fab-vine-prototype/MANUALS/index.html">Manuals</a>
         </nav>
       </div>
     </footer>
