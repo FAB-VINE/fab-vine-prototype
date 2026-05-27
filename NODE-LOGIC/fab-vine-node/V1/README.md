@@ -34,6 +34,31 @@ firmware/fab-vine-node-v1/fab-vine-node-v1.ino
 
 Arduino IDE expects the `.ino` file to live inside a folder with the same name.
 
+## Current OLED Test
+
+The current V1 sketch includes an OLED expression cycle with:
+
+- Normal eyes
+- Blink
+- Wink
+- Surprised
+- Look left
+- Look right
+- Yes motion
+- No motion
+
+Required Arduino libraries:
+
+- `Adafruit GFX Library`
+- `Adafruit SSD1306`
+
+Current OLED assumptions:
+
+- Display size: `128x64`
+- I2C address: `0x3C`
+- SDA pin: `D4`
+- SCL pin: `D5`
+
 ## Documentation Notes
 
 When adding a new OLED expression, document:
