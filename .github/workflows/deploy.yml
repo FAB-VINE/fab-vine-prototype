@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'LANDING-PAGE/**'
+      - 'MANUALS/**'
+      - 'NODE-LOGIC/fab-vine-node/V1/tools/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -39,6 +41,16 @@ jobs:
       - name: Build
         working-directory: LANDING-PAGE
         run: npm run build
+
+      - name: Include manuals
+        run: |
+          mkdir -p LANDING-PAGE/dist/MANUALS
+          cp -R MANUALS/. LANDING-PAGE/dist/MANUALS/
+
+      - name: Include OLED preview tools
+        run: |
+          mkdir -p LANDING-PAGE/dist/NODE-LOGIC/fab-vine-node/V1/tools
+          cp -R NODE-LOGIC/fab-vine-node/V1/tools/. LANDING-PAGE/dist/NODE-LOGIC/fab-vine-node/V1/tools/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
