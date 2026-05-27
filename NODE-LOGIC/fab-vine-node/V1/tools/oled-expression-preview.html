@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fab Vine OLED Expression Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #08100d;
+      color: #e9fff7;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(67, 255, 177, 0.18), transparent 30rem),
+        radial-gradient(circle at 70% 70%, rgba(65, 218, 255, 0.12), transparent 28rem),
+        #08100d;
+    }
+
+    main {
+      width: min(92vw, 820px);
+      display: grid;
+      gap: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 56px);
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: #a9c8bc;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .screen-wrap {
+      padding: 24px;
+      border: 1px solid rgba(180, 255, 226, 0.18);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35), inset 0 0 60px rgba(67, 255, 177, 0.06);
+      border-radius: 8px;
+    }
+
+    canvas {
+      width: 100%;
+      image-rendering: pixelated;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 0 34px rgba(92, 255, 199, 0.22);
+      border-radius: 6px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid rgba(185, 255, 228, 0.24);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #e9fff7;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: #35f3a5;
+      border-color: #35f3a5;
+      color: #04100b;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div>
+      <h1>OLED Expression Preview</h1>
+      <p>Local 128x64 preview for Fab Vine node expressions. Use this before uploading to the physical OLED.</p>
+    </div>
+
+    <section class="screen-wrap">
+      <canvas id="screen" width="128" height="64" aria-label="OLED screen preview"></canvas>
+    </section>
+
+    <div class="controls" id="controls"></div>
+  </main>
+
+  <script>
+    const canvas = document.querySelector("#screen");
+    const ctx = canvas.getContext("2d");
+    const controls = document.querySelector("#controls");
+    const faces = ["NORMAL", "BLINK", "WINK", "SURPRISED", "LOOK_LEFT", "LOOK_RIGHT", "YES_FACE", "NO_FACE"];
+    let face = "NO_FACE";
+    let state = false;
+
+    ctx.imageSmoothingEnabled = false;
+
+    function clear() {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, 128, 64);
+    }
+
+    function eye(x, y, w, h) {
+      roundRect(x, y, w, h, 8);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+    }
+
+    function pupil(x, y, r = 4) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#000";
+      ctx.fill();
+    }
+
+    function pupils(x1, y1, x2, y2) {
+      pupil(x1, y1);
+      pupil(x2, y2);
+    }
+
+    function thickLine(x1, y1, x2, y2) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+
+    function xEye(centerX, centerY) {
+      thickLine(centerX - 15, centerY - 15, centerX + 15, centerY + 15);
+      thickLine(centerX + 15, centerY - 15, centerX - 15, centerY + 15);
+    }
+
+    function checkEye(centerX, centerY) {
+      thickLine(centerX - 15, centerY, centerX - 5, centerY + 11);
+      thickLine(centerX - 5, centerY + 11, centerX + 17, centerY - 13);
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawFace() {
+      clear();
+
+      if (face === "NORMAL") {
+        eye(18, 18, 32, 24);
+        eye(78, 18, 32, 24);
+        pupils(34, 30, 94, 30);
+      }
+
+      if (face === "BLINK") {
+        eye(18, 28, 32, 5);
+        eye(78, 28, 32, 5);
+      }
+
+      if (face === "WINK") {
+        eye(18, 28, 32, 5);
+        eye(78, 18, 32, 24);
+        pupil(94, 30);
+      }
+
+      if (face === "SURPRISED") {
+        eye(20, 12, 28, 38);
+        eye(80, 12, 28, 38);
+        pupils(34, 30, 94, 30);
+      }
+
+      if (face === "LOOK_LEFT") {
+        eye(18, 18, 32, 24);
+        eye(78, 18, 32, 24);
+        pupils(26, 30, 86, 30);
+      }
+
+      if (face === "LOOK_RIGHT") {
+        eye(18, 18, 32, 24);
+        eye(78, 18, 32, 24);
+        pupils(42, 30, 102, 30);
+      }
+
+      if (face === "YES_FACE") {
+        const eyeY = state ? 13 : 23;
+        const pupilY = state ? 25 : 35;
+        eye(18, eyeY, 32, 24);
+        eye(78, eyeY, 32, 24);
+        pupils(34, pupilY, 94, pupilY);
+      }
+
+      if (face === "NO_FACE") {
+        const noDirection = state ? -1 : 1;
+        const eyeShift = noDirection * 5;
+        eye(18 + eyeShift, 18, 32, 24);
+        eye(78 + eyeShift, 18, 32, 24);
+        pupil(34 + eyeShift, 30, 5);
+        pupil(94 + eyeShift, 30, 5);
+      }
+    }
+
+    for (const item of faces) {
+      const button = document.createElement("button");
+      button.textContent = item.replace("_FACE", "").replace("_", " ");
+      button.addEventListener("click", () => {
+        face = item;
+        updateButtons();
+        drawFace();
+      });
+      controls.appendChild(button);
+    }
+
+    function updateButtons() {
+      for (const button of controls.children) {
+        button.classList.toggle("active", button.textContent === face.replace("_FACE", "").replace("_", " "));
+      }
+    }
+
+    setInterval(() => {
+      state = !state;
+      drawFace();
+    }, 220);
+
+    updateButtons();
+    drawFace();
+  </script>
+</body>
+</html>
