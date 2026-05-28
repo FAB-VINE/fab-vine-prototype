@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module V1 BOM | Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="./node-v1.html">Node V1</a>
+        <a href="../BUILD-FILES/bom/fab-vine-module-v1-bom.xlsx">Download XLSX</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">Physical Node / V1 BOM</div>
+      <h1>Fab Vine Module V1 parts, power, and cost baseline.</h1>
+      <p class="lead">
+        This bill of materials captures the current V1 buying plan for 60 modules, including the shared 5V power
+        architecture needed for 2,400 addressable LEDs.
+      </p>
+    </section>
+
+    <section class="stat-grid" aria-label="BOM summary">
+      <article class="stat-card">
+        <span class="meta">Module count</span>
+        <strong>60</strong>
+        <p>Baseline production quantity for the first shared build.</p>
+      </article>
+      <article class="stat-card">
+        <span class="meta">LEDs per module</span>
+        <strong>40</strong>
+        <p>Four strips of ten 5V addressable LEDs per module.</p>
+      </article>
+      <article class="stat-card">
+        <span class="meta">Shared supplies</span>
+        <strong>3 x 60A</strong>
+        <p>Mean Well LRS-350-5, one supply per 20 modules.</p>
+      </article>
+    </section>
+
+    <section class="panel section">
+      <div class="section-heading compact-heading">
+        <div>
+          <div class="eyebrow">Current BOM</div>
+          <h2>Module V1 Table</h2>
+        </div>
+        <p>Prices are working ranges for planning and should be confirmed before purchase.</p>
+      </div>
+
+      <div class="table-scroll" role="region" aria-label="Fab Vine Module V1 BOM table" tabindex="0">
+        <table class="bom-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Component</th>
+              <th>Qty / module</th>
+              <th>Recommended option</th>
+              <th>Approx. price</th>
+              <th>Link</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Microcontroller</td>
+              <td>Seeed Studio XIAO ESP32-C6</td>
+              <td>1</td>
+              <td>XIAO ESP32-C6</td>
+              <td>$5-$7 each</td>
+              <td><a href="https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html">Seeed</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>Main module controller.</td>
+            </tr>
+            <tr>
+              <td>Audio</td>
+              <td>I2S digital microphone</td>
+              <td>1</td>
+              <td>INMP441 I2S MEMS</td>
+              <td>$1.50-$4 each</td>
+              <td><a href="https://www.amazon.com/-/es/micr%C3%B3fono-omnidireccional-INMP441-compatible-precisi%C3%B3n/dp/B0C1C64R8S/">Amazon</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>Usually sold in packs.</td>
+            </tr>
+            <tr>
+              <td>Display</td>
+              <td>OLED 128x64 I2C</td>
+              <td>1</td>
+              <td>SSD1306 0.96 in</td>
+              <td>$2.50-$4 each</td>
+              <td><a href="https://www.amazon.com/-/es/gp/product/B09T6SJBV5">Amazon</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>I2C display, compatible with the current firmware assumptions.</td>
+            </tr>
+            <tr>
+              <td>Lighting</td>
+              <td>Addressable LED strip</td>
+              <td>4 strips of 10 LEDs</td>
+              <td>WS2812B / NeoPixel 5V</td>
+              <td>$4-$8 per module</td>
+              <td><a href="https://www.amazon.com/-/es/gp/product/B0CYGZWWXJ">Amazon</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>40 LEDs per module; choose the 5V variant.</td>
+            </tr>
+            <tr>
+              <td>Power / signal</td>
+              <td>Pre-wired Micro-Fit 3.0</td>
+              <td>1-2</td>
+              <td>4-pin pigtail / cable assembly</td>
+              <td>$2-$6 each</td>
+              <td><a href="https://www.digikey.com/en/product-highlight/m/molex/micro-fit-3-0-pre-crimped-jumper-leads">Digi-Key</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>Recommended for 5V, GND, data, and an extra signal.</td>
+            </tr>
+            <tr>
+              <td>Modular connection</td>
+              <td>3-pin magnetic pogo connector</td>
+              <td>4 pairs</td>
+              <td>3Pin magnetic pogo</td>
+              <td>$0.50-$2 per pair</td>
+              <td><a href="https://www.amazon.com/-/es/gp/product/B0D93X2TTT">Amazon</a></td>
+              <td><span class="status optional">Optional</span></td>
+              <td>Signal or docking only; do not carry main LED current through these pins.</td>
+            </tr>
+            <tr>
+              <td>Shared power</td>
+              <td>5V DC power supply</td>
+              <td>Shared</td>
+              <td>Mean Well LRS-350-5, 5V 60A</td>
+              <td>$30-$45 each</td>
+              <td><a href="https://www.digikey.com/en/products/detail/mean-well-usa-inc/LRS-350-5/7705037">Digi-Key</a></td>
+              <td><span class="status decided">Decided</span></td>
+              <td>Use three supplies total, one per 20 modules.</td>
+            </tr>
+            <tr>
+              <td>Structure</td>
+              <td>Case / support</td>
+              <td>1</td>
+              <td>3D print / laser cut</td>
+              <td>$12 each</td>
+              <td>Pending</td>
+              <td><span class="status decided">Decided</span></td>
+              <td>Estimated physical structure cost per module.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="two-col">
+      <article class="callout">
+        <div class="eyebrow">Power Architecture</div>
+        <h2>Do not send LED power through pogo pins.</h2>
+        <p>
+          Each module can draw roughly 2.7A at maximum white brightness. Use thicker 5V/GND wiring and Micro-Fit style
+          plugs for module power. Keep magnetic pogo connectors for light signals, docking, detect lines, or future
+          mechanical alignment.
+        </p>
+      </article>
+      <article class="callout">
+        <div class="eyebrow">Purchasing File</div>
+        <h2>Editable Excel BOM</h2>
+        <p>
+          The source workbook includes formulas for low and high estimates, 60-module totals, and a separate power plan.
+        </p>
+        <p><a class="button primary" href="../BUILD-FILES/bom/fab-vine-module-v1-bom.xlsx">Open the XLSX BOM</a></p>
+      </article>
+    </section>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>
