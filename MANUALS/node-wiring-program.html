@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node Wiring And Program | Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="./node-v1.html">Node V1</a>
+        <a href="./oled-expressions.html">OLED Expressions</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">Node V1 / Wiring + Firmware</div>
+      <h1>How the current Fab Vine node is connected and programmed.</h1>
+      <p class="lead">
+        This manual explains the current six-face prototype: how the XIAO ESP32-C6 is wired,
+        how each face detects a neighbor, how the OLED and LEDs connect, and what the program does.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Resumen rapido</h2>
+      <p>
+        El nodo funciona como un ser social. Si esta solo, respira en morado. Si una o mas caras detectan
+        vecino, el rojo desaparece y el nodo se siente mas seguro: saluda en la pantalla OLED y enciende
+        posiciones de la tira LED en verde/azul.
+      </p>
+      <ul>
+        <li>Microcontrolador: Seeed Studio XIAO ESP32-C6.</li>
+        <li>Pantalla: OLED SSD1306 128x64 por I2C.</li>
+        <li>Luces: 40 LEDs WS2812B / NeoPixel en una tira zig zag.</li>
+        <li>Vecinos: 6 caras, cada una con un pin de deteccion.</li>
+        <li>Conteo: el programa cuenta de 0 a 6 caras ocupadas.</li>
+      </ul>
+    </section>
+
+    <section class="panel section">
+      <h2>Esquema general</h2>
+      <pre><code>                    XIAO ESP32-C6
+                 +----------------+
+Face 1 DETECT -> | D0             |
+Face 2 DETECT -> | D1             |
+Face 3 DETECT -> | D2             |
+Face 4 DETECT -> | D3             |
+OLED SDA      -> | D4             |
+OLED SCL      -> | D5             |
+Face 5 DETECT -> | D6             |
+Face 6 DETECT -> | D7             |
+LED DATA      -> | D10            |
+GND -----------> | GND            |
+3V3 -----------> | 3V3            |
+                 +----------------+
+
+OLED SSD1306:
+VCC -> 3V3
+GND -> GND
+SDA -> D4
+SCL -> D5
+
+LED strip WS2812B / NeoPixel:
+5V  -> external 5V power supply
+GND -> external power GND + XIAO GND
+DIN -> D10
+
+Important:
+Do not power the LED strip from the pogo / face detect pins.</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>Face detect wiring</h2>
+      <p>
+        Cada cara usa una entrada digital con <code>INPUT_PULLUP</code>. Eso significa que el pin normalmente lee
+        <code>HIGH</code>. Cuando una cara se conecta fisicamente con un vecino, esa cara debe conectar su pin
+        <code>DETECT</code> a <code>GND</code>; entonces el programa lee <code>LOW</code> y cuenta esa cara como ocupada.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Face</th><th>XIAO pin</th><th>No neighbor</th><th>Neighbor connected</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Face 1</td><td><code>D0</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+            <tr><td>Face 2</td><td><code>D1</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+            <tr><td>Face 3</td><td><code>D2</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+            <tr><td>Face 4</td><td><code>D3</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+            <tr><td>Face 5</td><td><code>D6</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+            <tr><td>Face 6</td><td><code>D7</code></td><td>HIGH</td><td>LOW to GND</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><code>Test for one face:
+
+D0 ---- jumper ---- GND   = Face 1 connected
+D1 ---- jumper ---- GND   = Face 2 connected
+D2 ---- jumper ---- GND   = Face 3 connected
+D3 ---- jumper ---- GND   = Face 4 connected
+D6 ---- jumper ---- GND   = Face 5 connected
+D7 ---- jumper ---- GND   = Face 6 connected</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>LED zig zag map</h2>
+      <p>
+        La tira tiene 40 LEDs, pensados como 4 lineas fisicas de 10 LEDs. El programa no divide la tira
+        en sectores continuos. En cambio, enciende posiciones repetidas del zig zag.
+      </p>
+      <pre><code>Physical LED layout idea:
+
+Line 1:  1   2   3   4   5   6   7   8   9   10
+Line 2: 11  12  13  14  15  16  17  18  19   20
+Line 3: 21  22  23  24  25  26  27  28  29   30
+Line 4: 31  32  33  34  35  36  37  38  39   40
+
+Position 1 lights:  1, 11, 21, 31
+Position 3 lights:  3, 13, 23, 33
+Position 10 lights: 10, 20, 30, 40</code></pre>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Face</th><th>Zig zag position</th><th>Physical LEDs</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Face 1</td><td>1</td><td>1, 11, 21, 31</td></tr>
+            <tr><td>Face 2</td><td>3</td><td>3, 13, 23, 33</td></tr>
+            <tr><td>Face 3</td><td>5</td><td>5, 15, 25, 35</td></tr>
+            <tr><td>Face 4</td><td>6</td><td>6, 16, 26, 36</td></tr>
+            <tr><td>Face 5</td><td>8</td><td>8, 18, 28, 38</td></tr>
+            <tr><td>Face 6</td><td>10</td><td>10, 20, 30, 40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>What the program does</h2>
+      <ul>
+        <li>Reads the six face pins continuously.</li>
+        <li>Uses debounce so a noisy contact does not count many times.</li>
+        <li>Stores which faces are connected in <code>faceConnected[6]</code>.</li>
+        <li>Calculates <code>neighborCount</code> from 0 to 6.</li>
+        <li>If <code>neighborCount == 0</code>, the node is alone and breathes purple.</li>
+        <li>If <code>neighborCount</code> changes from 0 to 1 or more, the OLED performs a yes/nod greeting.</li>
+        <li>If one or more faces stay connected, the matching zig zag positions glow green/blue.</li>
+        <li>If the count returns to 0, the OLED performs a no/head-shake and the module returns to purple.</li>
+      </ul>
+      <pre><code>Program state logic:
+
+0 neighbors
+  -> NODE_IDLE
+  -> purple breathing
+
+0 to 1+ neighbors
+  -> NEIGHBOR_CONNECTED
+  -> OLED yes gesture
+  -> connected face LEDs green/blue
+
+1+ neighbors staying connected
+  -> CONNECTED_IDLE
+  -> calm green/blue connected state
+
+1+ to 0 neighbors
+  -> NEIGHBOR_REMOVED
+  -> OLED no gesture
+  -> return to purple idle</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>Upload notes</h2>
+      <ul>
+        <li>Board: Seeed Studio XIAO ESP32-C6.</li>
+        <li>FQBN: <code>esp32:esp32:XIAO_ESP32C6</code>.</li>
+        <li>Tested upload port: <code>COM3</code>.</li>
+        <li>Required libraries: <code>Adafruit GFX Library</code>, <code>Adafruit SSD1306</code>, <code>Adafruit NeoPixel</code>.</li>
+        <li>Main firmware file: <code>NODE-LOGIC/fab-vine-node/V1/firmware/fab-vine-node-v1/fab-vine-node-v1.ino</code>.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>
