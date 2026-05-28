@@ -192,6 +192,10 @@ p {
   margin: 44px 0 18px;
 }
 
+.compact-heading {
+  margin: 0 0 18px;
+}
+
 .area-map {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -322,6 +326,87 @@ p {
   font: 700 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
+.status.decided {
+  border-color: rgba(67, 255, 177, 0.42);
+  color: var(--green);
+}
+
+.status.optional {
+  border-color: rgba(113, 231, 255, 0.38);
+  color: var(--cyan);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 10px 0 22px;
+}
+
+.stat-card {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    rgba(255, 255, 255, 0.04);
+}
+
+.stat-card strong {
+  color: var(--text);
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid rgba(190, 255, 226, 0.14);
+  border-radius: 8px;
+}
+
+.bom-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.bom-table th,
+.bom-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(190, 255, 226, 0.12);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: left;
+  vertical-align: top;
+}
+
+.bom-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(7, 16, 13, 0.96);
+  color: var(--text);
+  font: 760 12px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.bom-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.bom-table a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+.bom-table a:hover {
+  text-decoration: underline;
+}
+
 .content-layout {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
@@ -438,7 +523,8 @@ pre {
   .content-layout,
   .overview-grid,
   .section-heading,
-  .area-map {
+  .area-map,
+  .stat-grid {
     grid-template-columns: 1fr;
   }
 
