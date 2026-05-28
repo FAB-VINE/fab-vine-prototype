@@ -27,6 +27,38 @@
       </ul>
     </section>
     <section class="panel section">
+      <h2>Current MVP</h2>
+      <p>The current firmware is an offline six-face physical-neighbor test. Each face has a DETECT line using an internal pullup: no neighbor reads HIGH, and a connected neighbor pulls that face to GND so it reads LOW. The firmware counts occupied faces from 0 to 6.</p>
+      <p>When the module is alone, the 40 WS2812B LEDs breathe in purple to suggest slight social anxiety without feeling like an alarm. When contact is detected, the red disappears: the OLED performs a soft greeting expression and the LEDs pulse green/blue to show a safer connected state. The strip is mapped as a zig zag, so a physical position such as 1 lights LEDs 1, 11, 21, and 31. Do not carry main LED power through pogo pins; use face connectors only for detect or signal behavior.</p>
+    </section>
+    <section class="panel section">
+      <h2>V2 Pin Map</h2>
+      <table>
+        <thead><tr><th>Function</th><th>XIAO pin</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Face 1 detect</td><td><code>D0</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>Face 2 detect</td><td><code>D1</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>Face 3 detect</td><td><code>D2</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>Face 4 detect</td><td><code>D3</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>OLED SDA</td><td><code>D4</code></td><td>I2C data</td></tr>
+          <tr><td>OLED SCL</td><td><code>D5</code></td><td>I2C clock</td></tr>
+          <tr><td>Face 5 detect</td><td><code>D6</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>Face 6 detect</td><td><code>D7</code></td><td>LOW when connected to GND</td></tr>
+          <tr><td>LED data</td><td><code>D10</code></td><td>WS2812B / NeoPixel data</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="panel section">
+      <h2>Zig Zag LED Map</h2>
+      <p>The strip is treated as four physical lines of ten LEDs. A face does not own a continuous sector; it lights a repeated physical position across the zig zag.</p>
+      <ul>
+        <li>Position 1 lights physical LEDs 1, 11, 21, and 31.</li>
+        <li>Position 3 lights physical LEDs 3, 13, 23, and 33.</li>
+        <li>Position 10 lights physical LEDs 10, 20, 30, and 40.</li>
+      </ul>
+      <p>The current default map is: Face 1 = position 1, Face 2 = position 3, Face 3 = position 5, Face 4 = position 6, Face 5 = position 8, Face 6 = position 10.</p>
+    </section>
+    <section class="panel section">
       <h2>Open Specific Resources</h2>
       <div class="nav">
         <a class="button primary" href="./bom-v1.html">Module V1 BOM</a>

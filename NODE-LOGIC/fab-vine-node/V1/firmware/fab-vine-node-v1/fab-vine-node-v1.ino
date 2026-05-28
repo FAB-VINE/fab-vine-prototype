@@ -1,22 +1,49 @@
 // Fab Vine Node V1
-// OLED expression test firmware for the unified Fab Vine node.
+// Offline MVP firmware for the unified Fab Vine node.
+//
+// MVP behavior:
+// - Detect physical neighbor connections through six face DETECT lines.
+// - Count how many faces currently have neighbors.
+// - React locally with OLED expression and WS2812B / NeoPixel light.
+// - Show slight social anxiety in purple when alone; remove red when connected.
+// - Keep WiFi, MQTT, and microphone logic out of this first physical test.
 
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_NeoPixel.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
 #define OLED_ADDRESS 0x3C
-#define SDA_PIN D4
-#define SCL_PIN D5
-#define START_WITH_NO_TEST true
+#define OLED_SDA_PIN D4
+#define OLED_SCL_PIN D5
+
+#define LED_PIN D10
+#define LED_COUNT 40
+#define FACE_COUNT 6
+#define LED_ROW_LENGTH 10
+
+const uint8_t facePins[FACE_COUNT] = { D0, D1, D2, D3, D6, D7 };
+
+// Physical 1-based zig-zag positions. Position 1 maps to LEDs 1, 11, 21, 31.
+// Edit this map when the final physical face-to-strip geometry changes.
+const uint8_t faceLedPositions[FACE_COUNT] = { 1, 3, 5, 6, 8, 10 };
+
+#define DETECT_DEBOUNCE_MS 40
+#define LED_FRAME_MS 30
+#define IDLE_BLINK_INTERVAL_MS 5200
+#define CONNECTED_WINK_INTERVAL_MS 6500
+#define GREETING_DURATION_MS 2500
+#define REMOVED_DURATION_MS 1200
+#define IDLE_ANXIETY_PERIOD_MS 1800
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // =====================================
-// Expressions
+// State
 // =====================================
 
 enum Face {
@@ -30,11 +57,30 @@ enum Face {
   NO_FACE
 };
 
+enum NodeState {
+  NODE_IDLE,
+  NEIGHBOR_CONNECTED,
+  CONNECTED_IDLE,
+  NEIGHBOR_REMOVED
+};
+
+NodeState nodeState = NODE_IDLE;
 Face currentFace = NORMAL;
 
-unsigned long lastChange = 0;
+bool faceConnected[FACE_COUNT] = { false, false, false, false, false, false };
+bool lastRawFaceConnected[FACE_COUNT] = { false, false, false, false, false, false };
+bool lastStableFaceConnected[FACE_COUNT] = { false, false, false, false, false, false };
+unsigned long lastFaceDebounce[FACE_COUNT] = { 0, 0, 0, 0, 0, 0 };
+
+uint8_t neighborCount = 0;
+uint8_t previousNeighborCount = 0;
+bool anyNeighborConnected = false;
+
+unsigned long lastFaceFrame = 0;
+unsigned long lastIdleBlink = 0;
+unsigned long lastConnectedWink = 0;
+unsigned long lastLedFrame = 0;
 unsigned long faceStart = 0;
-unsigned long duration = 1600;
 
 bool yesState = false;
 int noDirection = -1;
@@ -44,7 +90,15 @@ int noDirection = -1;
 // =====================================
 
 void setup() {
-  Wire.begin(SDA_PIN, SCL_PIN);
+  for (uint8_t faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+    pinMode(facePins[faceIndex], INPUT_PULLUP);
+  }
+
+  pixels.begin();
+  pixels.clear();
+  pixels.show();
+
+  Wire.begin(OLED_SDA_PIN, OLED_SCL_PIN);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
     while (true) {
@@ -53,10 +107,11 @@ void setup() {
   }
 
   display.clearDisplay();
-  currentFace = START_WITH_NO_TEST ? NO_FACE : NORMAL;
-  noDirection = -1;
+  currentFace = NORMAL;
   faceStart = millis();
-  lastChange = millis();
+  lastFaceFrame = millis();
+  lastIdleBlink = millis();
+  lastConnectedWink = millis();
   drawFace();
 }
 
@@ -65,77 +120,109 @@ void setup() {
 // =====================================
 
 void loop() {
-  if (currentFace == YES_FACE) {
-    updateYesFace();
-    return;
-  }
-
-  if (currentFace == NO_FACE) {
-    updateNoFace();
-    return;
-  }
-
-  if (millis() - lastChange > duration) {
-    nextFace();
-  }
+  updateFaceDetection();
+  updateNodeState();
+  updateFacePattern();
+  updateLedPattern();
 }
 
 // =====================================
-// Face state control
+// Face detection
 // =====================================
 
-void nextFace() {
-  currentFace = (Face)((currentFace + 1) % 8);
+void updateFaceDetection() {
+  bool changedStableFace = false;
+
+  for (uint8_t faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+    bool rawConnected = digitalRead(facePins[faceIndex]) == LOW;
+
+    if (rawConnected != lastRawFaceConnected[faceIndex]) {
+      lastRawFaceConnected[faceIndex] = rawConnected;
+      lastFaceDebounce[faceIndex] = millis();
+    }
+
+    if (millis() - lastFaceDebounce[faceIndex] > DETECT_DEBOUNCE_MS && rawConnected != lastStableFaceConnected[faceIndex]) {
+      lastStableFaceConnected[faceIndex] = rawConnected;
+      faceConnected[faceIndex] = rawConnected;
+      changedStableFace = true;
+    }
+  }
+
+  if (changedStableFace) {
+    updateNeighborCount();
+  }
+}
+
+void updateNeighborCount() {
+  previousNeighborCount = neighborCount;
+  neighborCount = 0;
+
+  for (uint8_t faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+    if (faceConnected[faceIndex]) {
+      neighborCount++;
+    }
+  }
+
+  anyNeighborConnected = neighborCount > 0;
+}
+
+// =====================================
+// Node state control
+// =====================================
+
+void updateNodeState() {
+  if (anyNeighborConnected && previousNeighborCount == 0 && neighborCount > 0) {
+    enterNeighborConnected();
+    previousNeighborCount = neighborCount;
+  }
+
+  if (!anyNeighborConnected && previousNeighborCount > 0 && neighborCount == 0) {
+    enterNeighborRemoved();
+    previousNeighborCount = neighborCount;
+  }
+
+  if (nodeState == NEIGHBOR_CONNECTED && millis() - faceStart > GREETING_DURATION_MS) {
+    enterConnectedIdle();
+  }
+
+  if (nodeState == NEIGHBOR_REMOVED && millis() - faceStart > REMOVED_DURATION_MS) {
+    enterIdle();
+  }
+}
+
+void enterIdle() {
+  nodeState = NODE_IDLE;
+  currentFace = NORMAL;
   faceStart = millis();
+  lastFaceFrame = millis();
+  lastIdleBlink = millis();
+  drawFace();
+}
 
-  if (currentFace == YES_FACE) {
-    yesState = false;
-  }
+void enterNeighborConnected() {
+  nodeState = NEIGHBOR_CONNECTED;
+  triggerYes();
+}
 
-  if (currentFace == NO_FACE) {
-    noDirection = -1;
-  }
+void enterConnectedIdle() {
+  nodeState = CONNECTED_IDLE;
+  currentFace = NORMAL;
+  faceStart = millis();
+  lastFaceFrame = millis();
+  lastConnectedWink = millis();
+  drawFace();
+}
 
-  if (currentFace == BLINK) {
-    doubleBlink();
-  } else {
-    drawFace();
-  }
-
-  switch (currentFace) {
-    case BLINK:
-      duration = 1800;
-      break;
-
-    case WINK:
-      duration = 700;
-      break;
-
-    case SURPRISED:
-      duration = 1200;
-      break;
-
-    case YES_FACE:
-      duration = 2500;
-      break;
-
-    case NO_FACE:
-      duration = 4000;
-      break;
-
-    default:
-      duration = 1600;
-      break;
-  }
-
-  lastChange = millis();
+void enterNeighborRemoved() {
+  nodeState = NEIGHBOR_REMOVED;
+  triggerNo();
 }
 
 void triggerYes() {
   currentFace = YES_FACE;
   yesState = false;
   faceStart = millis();
-  lastChange = millis();
+  lastFaceFrame = 0;
   drawYesFace();
 }
 
@@ -143,40 +230,166 @@ void triggerNo() {
   currentFace = NO_FACE;
   noDirection = -1;
   faceStart = millis();
-  lastChange = millis();
+  lastFaceFrame = 0;
   drawNoFace();
 }
 
-void returnToNormal() {
-  currentFace = NORMAL;
-  faceStart = millis();
-  lastChange = millis();
-  duration = 1600;
-  drawFace();
+void updateFacePattern() {
+  if (nodeState == NEIGHBOR_CONNECTED) {
+    updateYesFace();
+    return;
+  }
+
+  if (nodeState == NEIGHBOR_REMOVED) {
+    updateNoFace();
+    return;
+  }
+
+  if (nodeState == NODE_IDLE && millis() - lastIdleBlink > IDLE_BLINK_INTERVAL_MS) {
+    doubleBlink();
+    currentFace = NORMAL;
+    lastIdleBlink = millis();
+    drawFace();
+    return;
+  }
+
+  if (nodeState == CONNECTED_IDLE && millis() - lastConnectedWink > CONNECTED_WINK_INTERVAL_MS) {
+    currentFace = WINK;
+    drawFace();
+    delay(180);
+    currentFace = NORMAL;
+    drawFace();
+    lastConnectedWink = millis();
+  }
 }
 
 void updateYesFace() {
-  if (millis() - lastChange > 220) {
+  if (millis() - lastFaceFrame > 220) {
     yesState = !yesState;
     drawYesFace();
-    lastChange = millis();
-  }
-
-  if (millis() - faceStart > 2500) {
-    nextFace();
+    lastFaceFrame = millis();
   }
 }
 
 void updateNoFace() {
-  if (millis() - lastChange > 220) {
+  if (millis() - lastFaceFrame > 220) {
     noDirection *= -1;
     drawNoFace();
-    lastChange = millis();
+    lastFaceFrame = millis();
+  }
+}
+
+// =====================================
+// LED patterns
+// =====================================
+
+void updateLedPattern() {
+  if (millis() - lastLedFrame < LED_FRAME_MS) {
+    return;
   }
 
-  if (millis() - faceStart > 2500) {
-    returnToNormal();
+  lastLedFrame = millis();
+
+  switch (nodeState) {
+    case NODE_IDLE:
+      drawAnxiousIdleLeds();
+      break;
+
+    case NEIGHBOR_CONNECTED:
+      drawConnectedFaceLeds(46, 180, 130, 900);
+      break;
+
+    case CONNECTED_IDLE:
+      drawConnectedFaceLeds(18, 92, 92, 2600);
+      break;
+
+    case NEIGHBOR_REMOVED:
+      drawBreathingLeds(70, 0, 100, 8, 45, 1000);
+      break;
   }
+}
+
+void drawConnectedFaceLeds(uint8_t minLevel, uint8_t maxLevel, uint8_t blueBase, unsigned long periodMs) {
+  unsigned long phase = millis() % periodMs;
+  unsigned long halfPeriod = periodMs / 2;
+  uint8_t level;
+
+  if (phase < halfPeriod) {
+    level = minLevel + ((maxLevel - minLevel) * phase) / halfPeriod;
+  } else {
+    level = maxLevel - ((maxLevel - minLevel) * (phase - halfPeriod)) / halfPeriod;
+  }
+
+  pixels.clear();
+
+  for (uint8_t faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
+    if (faceConnected[faceIndex]) {
+      uint8_t green = level;
+      uint8_t blue = (blueBase * level) / 255;
+      drawZigZagPosition(faceLedPositions[faceIndex], pixels.Color(0, green, blue));
+    }
+  }
+
+  pixels.show();
+}
+
+void drawZigZagPosition(uint8_t physicalPosition, uint32_t color) {
+  if (physicalPosition < 1 || physicalPosition > LED_ROW_LENGTH) {
+    return;
+  }
+
+  uint8_t columnIndex = physicalPosition - 1;
+
+  for (uint8_t rowStart = 0; rowStart < LED_COUNT; rowStart += LED_ROW_LENGTH) {
+    pixels.setPixelColor(rowStart + columnIndex, color);
+  }
+}
+
+void drawAnxiousIdleLeds() {
+  unsigned long phase = millis() % IDLE_ANXIETY_PERIOD_MS;
+  unsigned long halfPeriod = IDLE_ANXIETY_PERIOD_MS / 2;
+  uint8_t baseLevel;
+
+  if (phase < halfPeriod) {
+    baseLevel = 14 + (58 * phase) / halfPeriod;
+  } else {
+    baseLevel = 72 - (58 * (phase - halfPeriod)) / halfPeriod;
+  }
+
+  uint8_t jitter = ((millis() / 137) % 2 == 0) ? 0 : 10;
+  uint8_t level = constrain(baseLevel + jitter, 14, 82);
+  uint8_t red = (level * 70) / 255;
+  uint8_t blue = (level * 150) / 255;
+  uint32_t color = pixels.Color(red, 0, blue);
+
+  for (int i = 0; i < LED_COUNT; i++) {
+    pixels.setPixelColor(i, color);
+  }
+
+  pixels.show();
+}
+
+void drawBreathingLeds(uint8_t red, uint8_t green, uint8_t blue, uint8_t minLevel, uint8_t maxLevel, unsigned long periodMs) {
+  unsigned long phase = millis() % periodMs;
+  unsigned long halfPeriod = periodMs / 2;
+  uint8_t level;
+
+  if (phase < halfPeriod) {
+    level = minLevel + ((maxLevel - minLevel) * phase) / halfPeriod;
+  } else {
+    level = maxLevel - ((maxLevel - minLevel) * (phase - halfPeriod)) / halfPeriod;
+  }
+
+  uint8_t scaledRed = (red * level) / 255;
+  uint8_t scaledGreen = (green * level) / 255;
+  uint8_t scaledBlue = (blue * level) / 255;
+  uint32_t color = pixels.Color(scaledRed, scaledGreen, scaledBlue);
+
+  for (int i = 0; i < LED_COUNT; i++) {
+    pixels.setPixelColor(i, color);
+  }
+
+  pixels.show();
 }
 
 // =====================================

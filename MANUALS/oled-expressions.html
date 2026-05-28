@@ -68,7 +68,7 @@
 
         <section id="expression-set" class="panel section">
           <h2>Current Expression Set</h2>
-          <p>The current firmware cycles through these face states:</p>
+          <p>The current firmware keeps these face states available. In the six-face MVP, they are triggered by social state instead of running as a fixed automatic cycle:</p>
           <ul>
             <li><code>NORMAL</code> - neutral open eyes with centered pupils.</li>
             <li><code>BLINK</code> - both eyes briefly closed.</li>
@@ -92,7 +92,7 @@
                 <li>Pupils stay centered inside the moving eyes.</li>
                 <li>The expression updates every <code>220 ms</code>.</li>
                 <li>The full affirmation lasts around <code>2500 ms</code>.</li>
-                <li>After affirmation, the firmware advances to <code>NO_FACE</code>.</li>
+                <li>Affirmation is triggered when the neighbor count changes from <code>0</code> to one or more occupied faces.</li>
               </ul>
             </div>
             <div class="callout">
@@ -133,19 +133,20 @@
 
         <section id="loop" class="panel section">
           <h2>Timing And Loop Structure</h2>
-          <p>The loop has special handlers for affirmation and negation:</p>
+          <p>The loop combines six-face contact sensing, node social state, OLED expressions, and LED updates:</p>
           <ul>
+            <li><code>updateFaceDetection()</code> reads the six face detect pins with debounce.</li>
+            <li><code>updateNeighborCount()</code> counts occupied faces from <code>0</code> to <code>6</code>.</li>
+            <li><code>updateNodeState()</code> decides whether the node is alone, greeting, connected, or returning to idle.</li>
             <li><code>updateYesFace()</code> controls <code>YES_FACE</code>.</li>
             <li><code>updateNoFace()</code> controls <code>NO_FACE</code>.</li>
-            <li><code>nextFace()</code> advances the normal expression sequence.</li>
-            <li><code>returnToNormal()</code> resets the face after the negation cycle.</li>
           </ul>
           <div class="callout">
             <h3>Important Behavior</h3>
             <p>
-              <code>YES_FACE</code> must call <code>nextFace()</code> when it finishes, so the cycle can continue
-              into <code>NO_FACE</code>. Returning to <code>NORMAL</code> directly from <code>YES_FACE</code> skips
-              <code>NO_FACE</code>.
+              <code>YES_FACE</code> appears when the first neighbor arrives. <code>NO_FACE</code> appears when the last
+              neighbor leaves. While one or more faces stay connected, the node returns to <code>NORMAL</code> with
+              occasional <code>WINK</code> behavior.
             </p>
           </div>
         </section>
@@ -176,6 +177,16 @@
           <ul>
             <li><code>Adafruit GFX Library</code></li>
             <li><code>Adafruit SSD1306</code></li>
+            <li><code>Adafruit NeoPixel</code></li>
+          </ul>
+          <h3>Current Face Detect Pins</h3>
+          <ul>
+            <li>Face 1: <code>D0</code></li>
+            <li>Face 2: <code>D1</code></li>
+            <li>Face 3: <code>D2</code></li>
+            <li>Face 4: <code>D3</code></li>
+            <li>Face 5: <code>D6</code></li>
+            <li>Face 6: <code>D7</code></li>
           </ul>
         </section>
 

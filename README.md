@@ -34,6 +34,8 @@ Fab Vine is a living network of fabricated modules, embedded electronics, light,
 
 The current V1 module direction uses a Seeed Studio XIAO ESP32-C6, an I2S MEMS microphone, a 128x64 I2C OLED display, 40 addressable LEDs per module, Micro-Fit power/signal wiring, and shared 5V power supplies for a 60-module installation.
 
+The current firmware MVP is offline and social: each node can detect up to six physical neighbor faces, count occupied faces from 0 to 6, and react with OLED expressions plus zig-zag mapped LED behavior. When alone, the module breathes purple; when one or more neighbors are detected, connected face positions glow green/blue with no red channel.
+
 ## License
 
 This work is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License][cc-by-nc].

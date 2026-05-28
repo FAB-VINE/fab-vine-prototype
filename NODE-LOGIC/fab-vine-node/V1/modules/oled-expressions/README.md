@@ -6,7 +6,7 @@ The OLED display gives each Fab Vine node a simple visible personality. Expressi
 
 ## Current Expression Set
 
-The current firmware cycles through these expressions:
+The current firmware keeps these expressions available. In the six-face MVP, expressions are triggered by node state instead of running as a fixed automatic cycle:
 
 - `NORMAL` - neutral open eyes with centered pupils.
 - `BLINK` - both eyes briefly closed.
@@ -27,7 +27,7 @@ Current behavior:
 - Pupils stay centered inside the moving eyes.
 - The expression updates every `220 ms`.
 - The full affirmation lasts around `2500 ms`.
-- After affirmation, the firmware advances to `NO_FACE`.
+- Affirmation is triggered when the neighbor count changes from `0` to one or more occupied faces.
 
 Design intention:
 
@@ -55,19 +55,19 @@ Design intention:
 
 ## Timing And Loop Structure
 
-The loop has special handlers for affirmation and negation:
+The loop combines six-face contact sensing, node social state, OLED expressions, and LED updates:
 
+- `updateFaceDetection()` reads the six face detect pins with debounce.
+- `updateNeighborCount()` counts occupied faces from `0` to `6`.
+- `updateNodeState()` decides whether the node is alone, greeting, connected, or returning to idle.
 - `updateYesFace()` controls `YES_FACE`.
 - `updateNoFace()` controls `NO_FACE`.
-- `nextFace()` advances the normal expression sequence.
-- `returnToNormal()` resets the face after the negation cycle.
 
 Important behavior:
 
-- `YES_FACE` must call `nextFace()` when it finishes, so the cycle can continue into `NO_FACE`.
-- `NO_FACE` can call `returnToNormal()` when it finishes, because it is the last expression in the current sequence.
-
-This is important because returning to `NORMAL` directly from `YES_FACE` skips `NO_FACE`.
+- `YES_FACE` appears when the first neighbor arrives.
+- `NO_FACE` appears when the last neighbor leaves.
+- While one or more faces stay connected, the node returns to `NORMAL` with occasional `WINK` behavior.
 
 ## Preview Tool
 
@@ -105,6 +105,16 @@ Required Arduino libraries:
 
 - `Adafruit GFX Library`
 - `Adafruit SSD1306`
+- `Adafruit NeoPixel`
+
+Current face detect pins:
+
+- Face 1: `D0`
+- Face 2: `D1`
+- Face 3: `D2`
+- Face 4: `D3`
+- Face 5: `D6`
+- Face 6: `D7`
 
 ## Editing Guidelines
 
