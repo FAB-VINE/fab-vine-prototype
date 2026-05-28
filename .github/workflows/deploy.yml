@@ -7,6 +7,7 @@ on:
     paths:
       - 'LANDING-PAGE/**'
       - 'MANUALS/**'
+      - 'BUILD-FILES/bom/**'
       - 'NODE-LOGIC/fab-vine-node/V1/tools/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
@@ -46,6 +47,11 @@ jobs:
         run: |
           mkdir -p LANDING-PAGE/dist/MANUALS
           cp -R MANUALS/. LANDING-PAGE/dist/MANUALS/
+
+      - name: Include BOM files
+        run: |
+          mkdir -p LANDING-PAGE/dist/BUILD-FILES/bom
+          cp -R BUILD-FILES/bom/. LANDING-PAGE/dist/BUILD-FILES/bom/
 
       - name: Include OLED preview tools
         run: |
