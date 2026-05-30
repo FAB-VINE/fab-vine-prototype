@@ -33,8 +33,9 @@
       <h2>Resumen rapido</h2>
       <p>
         El nodo funciona como un ser social. Si esta solo, respira en morado. Si una o mas caras detectan
-        vecino, el rojo desaparece y el nodo se siente mas seguro: saluda en la pantalla OLED y enciende
-        posiciones de la tira LED en verde/azul.
+        vecino, el rojo desaparece y el nodo se siente mas seguro: saluda en la pantalla OLED y respira
+        en azul verdoso. En Sprint 2, los modulos tambien pueden elegir un lider aleatorio usando una
+        linea de comunicacion en D8.
       </p>
       <ul>
         <li>Microcontrolador: Seeed Studio XIAO ESP32-C6.</li>
@@ -58,6 +59,7 @@ OLED SCL      -> | D5             |
 Face 5 DETECT -> | D6             |
 Face 6 DETECT -> | D7             |
 LED DATA      -> | D10            |
+DATA/SIGNAL   -> | D8             |
 GND -----------> | GND            |
 3V3 -----------> | 3V3            |
                  +----------------+
@@ -75,6 +77,38 @@ DIN -> D10
 
 Important:
 Do not power the LED strip from the pogo / face detect pins.</code></pre>
+      <pre><code>Leader communication between two modules:
+
+Module A D8 ------------- Module B D8
+Module A GND ------------ Module B GND
+
+Recommended:
+3V3
+ |
+[10k resistor]
+ |
+D8 shared data line
+
+For the current bench test:
+The code also enables the internal pull-up on D8, so you can test without the 10k resistor.</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>Official XIAO ESP32-C6 pinout</h2>
+      <p>
+        Esta es la referencia visual oficial de Seeed para volver rapido al mapa fisico del XIAO:
+        frente, reverso, nombres Arduino <code>D0-D10</code>, GPIO reales y pines de energia.
+      </p>
+      <img
+        class="manual-image"
+        src="./assets/xiao-esp32c6-official-pinout.png"
+        alt="Official Seeed Studio XIAO ESP32-C6 pinout showing front and back pin labels">
+      <p class="figure-caption">
+        Source: Seeed Studio Wiki, XIAO ESP32-C6 Pinout Sheet. Para la programacion usamos los nombres Arduino
+        <code>D0</code> a <code>D10</code>; el firmware define todos los pines al inicio del sketch.
+        Referencia original:
+        <a href="https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/#resources">Seeed Studio Wiki resources</a>.
+      </p>
     </section>
 
     <section class="panel section">
@@ -107,6 +141,23 @@ D2 ---- jumper ---- GND   = Face 3 connected
 D3 ---- jumper ---- GND   = Face 4 connected
 D6 ---- jumper ---- GND   = Face 5 connected
 D7 ---- jumper ---- GND   = Face 6 connected</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>Leader election wiring</h2>
+      <p>
+        Para que los modulos elijan lider de forma democratica, necesitan una linea extra para comunicarse.
+        En esta version usamos <code>D8</code> como <code>DATA / SIGNAL</code>. Los dos modulos conectan
+        <code>D8</code> con <code>D8</code> y tambien comparten <code>GND</code>.
+      </p>
+      <ul>
+        <li><code>D8</code> trabaja a <code>3.3V</code>; no conectar a 5V.</li>
+        <li>La linea se usa como bus open-drain: los modulos solo jalan la linea a LOW o la sueltan.</li>
+        <li>El programa activa el pull-up interno de <code>D8</code>, asi que se puede probar sin resistencia externa.</li>
+        <li>Una resistencia <code>10k</code> de <code>D8</code> a <code>3V3</code> sigue siendo recomendable para una version mas estable.</li>
+        <li>Cada modulo espera un tiempo aleatorio; el primero que toma la linea se vuelve lider.</li>
+        <li>El lider mantiene <code>D8</code> en <code>LOW</code> como senal de presencia, y el otro modulo se queda como seguidor.</li>
+      </ul>
     </section>
 
     <section class="panel section">
@@ -151,7 +202,10 @@ Position 10 lights: 10, 20, 30, 40</code></pre>
         <li>Calculates <code>neighborCount</code> from 0 to 6.</li>
         <li>If <code>neighborCount == 0</code>, the node is alone and breathes purple.</li>
         <li>If <code>neighborCount</code> changes from 0 to 1 or more, the OLED performs a yes/nod greeting.</li>
-        <li>If one or more faces stay connected, the strip breathes in blue-green.</li>
+        <li>When connected, both modules start a random wait over <code>D8</code>.</li>
+        <li>The first module to claim <code>D8</code> becomes leader and holds the line <code>LOW</code>.</li>
+        <li>The leader shows confident eyebrows on the OLED and breathes stronger blue.</li>
+        <li>The follower keeps the normal/wink OLED behavior and breathes blue-green.</li>
         <li>If the count returns to 0, the OLED performs a no/head-shake and the module returns to purple.</li>
       </ul>
       <pre><code>Program state logic:
@@ -167,7 +221,9 @@ Position 10 lights: 10, 20, 30, 40</code></pre>
 
 1+ neighbors staying connected
   -> CONNECTED_IDLE
-  -> calm blue-green breathing state
+  -> random leader claim over D8
+  -> leader: eyebrows + stronger blue
+  -> follower: calm blue-green breathing state
 
 1+ to 0 neighbors
   -> NEIGHBOR_REMOVED

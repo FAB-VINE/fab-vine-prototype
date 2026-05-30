@@ -11,6 +11,7 @@ The LED strip communicates node state locally:
 - `NODE_IDLE` - soft purple anxious breathing pattern while the module is alone.
 - `NEIGHBOR_CONNECTED` - brighter blue-green full-strip greeting breath with no red channel.
 - `CONNECTED_IDLE` - calm secure blue-green full-strip breathing pattern with no red channel.
+- `LEADER` election result - stronger blue breathing pattern with no red channel.
 - `NEIGHBOR_REMOVED` - short purple transition before returning to anxious idle.
 
 Color language:

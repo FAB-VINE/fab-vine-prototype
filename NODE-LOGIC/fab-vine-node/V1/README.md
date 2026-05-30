@@ -44,6 +44,7 @@ It demonstrates:
 - OLED expression display on a `128x64` SSD1306 screen.
 - 40 WS2812B / NeoPixel LEDs with social-state breathing patterns.
 - Physical neighbor detection across six module faces.
+- Democratic random leader election over a shared `D8` data/signal line.
 - A local "living greeting" when one or more neighbor contacts are detected.
 
 This MVP intentionally does not include WiFi, MQTT, or microphone behavior yet. The first goal is to prove that a node can sense a physical neighbor and react clearly without network dependencies.
@@ -62,11 +63,22 @@ Detection behavior:
 - Neighbor connected: that face is connected to `GND` and reads `LOW`.
 - The firmware counts occupied faces from `0` to `6`.
 
+Leader election behavior:
+
+- `D8` is used as a shared `DATA / SIGNAL` line between modules.
+- Connect module `D8` to neighbor module `D8`, and share `GND`.
+- The firmware uses the internal pull-up on `D8`; an external `10k` pull-up from `D8` to `3V3` is recommended later for a more stable physical bus, but it is not required for the current short bench test.
+- When the first neighbor appears, each module waits a random amount of time before claiming the shared line.
+- The first module to claim `D8` becomes leader and keeps the line pulled `LOW` as a leader presence signal.
+- The other module sees the line occupied and stays follower while the leader is still connected.
+- If all neighbors disconnect, the election resets.
+
 Visual behavior:
 
 - No neighbor: normal OLED eyes with a soft purple LED breath. The purple represents slight social anxiety while the module is alone, without feeling like an alarm.
 - First neighbor connected: OLED performs a soft yes/nod expression and LEDs pulse brighter green/blue. The red disappears completely when the module feels socially connected.
-- Still connected: calm connected idle state with occasional wink and a full-strip blue-green breathing pattern.
+- Still connected follower: calm connected idle state with occasional wink and a full-strip blue-green breathing pattern.
+- Still connected leader: confident eyebrow OLED face and a stronger blue breathing pattern.
 - Neighbor removed: OLED performs a short no/head-shake expression, the anxious purple returns briefly, and the module settles back into idle.
 
 ## Pin Defaults
@@ -82,7 +94,15 @@ All MVP pins are defined at the top of the Arduino sketch so they can be changed
 - Face 4 detect: `D3`
 - Face 5 detect: `D6`
 - Face 6 detect: `D7`
+- Data / signal: `D8`
+- Reserved: `D9`
 - LED count: `40`
+
+Official XIAO ESP32-C6 pinout reference:
+
+- Local manual image: `../../../MANUALS/assets/xiao-esp32c6-official-pinout.png`
+- Original Seeed resource: `https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/#resources`
+- Seeed pinout sheet archived in the manual assets folder: `../../../MANUALS/assets/XIAO_ESP32C6_Pinout.xlsx`
 
 Do not carry main LED power through pogo pins. Use face connectors for detect/signal only, and keep 5V/GND LED power on suitable power wiring.
 

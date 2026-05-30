@@ -476,6 +476,22 @@ pre {
   color: var(--text);
 }
 
+.manual-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(190, 255, 226, 0.16);
+  border-radius: 8px;
+  background: #f6f7f6;
+}
+
+.figure-caption {
+  margin-top: -4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .two-col {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

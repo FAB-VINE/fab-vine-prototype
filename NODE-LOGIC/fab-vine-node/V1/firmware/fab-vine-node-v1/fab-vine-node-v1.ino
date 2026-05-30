@@ -12,6 +12,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_NeoPixel.h>
+#include <esp_system.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -24,6 +25,7 @@
 #define LED_COUNT 40
 #define FACE_COUNT 6
 #define LED_ROW_LENGTH 10
+#define DATA_SIGNAL_PIN D8
 
 const uint8_t facePins[FACE_COUNT] = { D0, D1, D2, D3, D6, D7 };
 
@@ -38,6 +40,9 @@ const uint8_t faceLedPositions[FACE_COUNT] = { 1, 3, 5, 6, 8, 10 };
 #define GREETING_DURATION_MS 2500
 #define REMOVED_DURATION_MS 1200
 #define IDLE_ANXIETY_PERIOD_MS 1800
+#define ELECTION_MIN_DELAY_MS 700
+#define ELECTION_RANDOM_WINDOW_MS 3000
+#define FOLLOWER_RECHECK_MS 200
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -54,7 +59,8 @@ enum Face {
   LOOK_LEFT,
   LOOK_RIGHT,
   YES_FACE,
-  NO_FACE
+  NO_FACE,
+  LEADER_FACE
 };
 
 enum NodeState {
@@ -64,7 +70,15 @@ enum NodeState {
   NEIGHBOR_REMOVED
 };
 
+enum ElectionState {
+  NO_ELECTION,
+  ELECTION_WAIT,
+  LEADER,
+  FOLLOWER
+};
+
 NodeState nodeState = NODE_IDLE;
+ElectionState electionState = NO_ELECTION;
 Face currentFace = NORMAL;
 
 bool faceConnected[FACE_COUNT] = { false, false, false, false, false, false };
@@ -85,6 +99,11 @@ unsigned long faceStart = 0;
 bool yesState = false;
 int noDirection = -1;
 
+uint16_t localTicket = 0;
+uint16_t remoteTicket = 0;
+unsigned long electionStartAt = 0;
+unsigned long lastFollowerRecheck = 0;
+
 // =====================================
 // Setup
 // =====================================
@@ -93,6 +112,8 @@ void setup() {
   for (uint8_t faceIndex = 0; faceIndex < FACE_COUNT; faceIndex++) {
     pinMode(facePins[faceIndex], INPUT_PULLUP);
   }
+
+  releaseDataSignal();
 
   pixels.begin();
   pixels.clear();
@@ -122,6 +143,7 @@ void setup() {
 void loop() {
   updateFaceDetection();
   updateNodeState();
+  updateLeaderElection();
   updateFacePattern();
   updateLedPattern();
 }
@@ -192,6 +214,7 @@ void updateNodeState() {
 
 void enterIdle() {
   nodeState = NODE_IDLE;
+  resetLeaderElection();
   currentFace = NORMAL;
   faceStart = millis();
   lastFaceFrame = millis();
@@ -201,12 +224,13 @@ void enterIdle() {
 
 void enterNeighborConnected() {
   nodeState = NEIGHBOR_CONNECTED;
+  beginLeaderElection();
   triggerYes();
 }
 
 void enterConnectedIdle() {
   nodeState = CONNECTED_IDLE;
-  currentFace = NORMAL;
+  currentFace = electionState == LEADER ? LEADER_FACE : NORMAL;
   faceStart = millis();
   lastFaceFrame = millis();
   lastConnectedWink = millis();
@@ -215,7 +239,84 @@ void enterConnectedIdle() {
 
 void enterNeighborRemoved() {
   nodeState = NEIGHBOR_REMOVED;
+  resetLeaderElection();
   triggerNo();
+}
+
+// =====================================
+// Leader election
+// =====================================
+
+void beginLeaderElection() {
+  localTicket = (uint16_t)(esp_random() & 0xFFFF);
+  remoteTicket = 0;
+  electionStartAt = millis() + ELECTION_MIN_DELAY_MS + (localTicket % ELECTION_RANDOM_WINDOW_MS);
+  lastFollowerRecheck = millis();
+  electionState = ELECTION_WAIT;
+  releaseDataSignal();
+}
+
+void resetLeaderElection() {
+  electionState = NO_ELECTION;
+  localTicket = 0;
+  remoteTicket = 0;
+  electionStartAt = 0;
+  lastFollowerRecheck = 0;
+  releaseDataSignal();
+}
+
+void updateLeaderElection() {
+  if (!anyNeighborConnected) {
+    return;
+  }
+
+  if (electionState == ELECTION_WAIT) {
+    if (digitalRead(DATA_SIGNAL_PIN) == LOW) {
+      electionState = FOLLOWER;
+      lastFollowerRecheck = millis();
+      if (nodeState == CONNECTED_IDLE) {
+        currentFace = NORMAL;
+        drawFace();
+      }
+      return;
+    }
+
+    if (millis() >= electionStartAt) {
+      electionState = LEADER;
+      pullDataSignalLow();
+      if (nodeState == CONNECTED_IDLE) {
+        currentFace = LEADER_FACE;
+        drawFace();
+      }
+      return;
+    }
+  }
+
+  if (electionState == LEADER) {
+    pullDataSignalLow();
+    return;
+  }
+
+  if (electionState == FOLLOWER) {
+    releaseDataSignal();
+    if (millis() - lastFollowerRecheck < FOLLOWER_RECHECK_MS) {
+      return;
+    }
+
+    lastFollowerRecheck = millis();
+    if (digitalRead(DATA_SIGNAL_PIN) == HIGH) {
+      beginLeaderElection();
+    }
+  }
+}
+
+void pullDataSignalLow() {
+  pinMode(DATA_SIGNAL_PIN, OUTPUT);
+  digitalWrite(DATA_SIGNAL_PIN, LOW);
+}
+
+void releaseDataSignal() {
+  pinMode(DATA_SIGNAL_PIN, INPUT_PULLUP);
 }
 
 void triggerYes() {
@@ -254,6 +355,13 @@ void updateFacePattern() {
   }
 
   if (nodeState == CONNECTED_IDLE && millis() - lastConnectedWink > CONNECTED_WINK_INTERVAL_MS) {
+    if (electionState == LEADER) {
+      currentFace = LEADER_FACE;
+      drawFace();
+      lastConnectedWink = millis();
+      return;
+    }
+
     currentFace = WINK;
     drawFace();
     delay(180);
@@ -300,7 +408,11 @@ void updateLedPattern() {
       break;
 
     case CONNECTED_IDLE:
-      drawBreathingLeds(0, 92, 88, 14, 86, 2600);
+      if (electionState == LEADER) {
+        drawBreathingLeds(0, 80, 180, 32, 185, 1800);
+      } else {
+        drawBreathingLeds(0, 92, 88, 14, 86, 2600);
+      }
       break;
 
     case NEIGHBOR_REMOVED:
@@ -431,6 +543,10 @@ void drawFace() {
     case NO_FACE:
       drawNoFace();
       return;
+
+    case LEADER_FACE:
+      drawLeaderFace();
+      return;
   }
 
   display.display();
@@ -496,6 +612,11 @@ void eyesNormal() {
   eye(18, 18, 32, 24);
   eye(78, 18, 32, 24);
   pupils(34, 30, 94, 30);
+}
+
+void leaderBrows() {
+  thickLine(18, 10, 50, 10);
+  thickLine(78, 10, 110, 10);
 }
 
 // =====================================
@@ -579,5 +700,16 @@ void drawNoFace() {
   display.fillCircle(34 + eyeShift, 30, 5, SSD1306_BLACK);
   display.fillCircle(94 + eyeShift, 30, 5, SSD1306_BLACK);
 
+  display.display();
+}
+
+// =====================================
+// Leader
+// =====================================
+
+void drawLeaderFace() {
+  display.clearDisplay();
+  leaderBrows();
+  eyesNormal();
   display.display();
 }
