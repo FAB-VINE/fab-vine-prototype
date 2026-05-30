@@ -296,11 +296,11 @@ void updateLedPattern() {
       break;
 
     case NEIGHBOR_CONNECTED:
-      drawConnectedFaceLeds(46, 180, 130, 900);
+      drawBreathingLeds(0, 125, 105, 34, 155, 1000);
       break;
 
     case CONNECTED_IDLE:
-      drawConnectedFaceLeds(18, 92, 92, 2600);
+      drawBreathingLeds(0, 92, 88, 14, 86, 2600);
       break;
 
     case NEIGHBOR_REMOVED:

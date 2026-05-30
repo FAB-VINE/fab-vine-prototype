@@ -29,7 +29,7 @@
     <section class="panel section">
       <h2>Current MVP</h2>
       <p>The current firmware is an offline six-face physical-neighbor test. Each face has a DETECT line using an internal pullup: no neighbor reads HIGH, and a connected neighbor pulls that face to GND so it reads LOW. The firmware counts occupied faces from 0 to 6.</p>
-      <p>When the module is alone, the 40 WS2812B LEDs breathe in purple to suggest slight social anxiety without feeling like an alarm. When contact is detected, the red disappears: the OLED performs a soft greeting expression and the LEDs pulse green/blue to show a safer connected state. The strip is mapped as a zig zag, so a physical position such as 1 lights LEDs 1, 11, 21, and 31. Do not carry main LED power through pogo pins; use face connectors only for detect or signal behavior.</p>
+      <p>When the module is alone, the 40 WS2812B LEDs breathe in purple to suggest slight social anxiety without feeling like an alarm. When contact is detected, the red disappears: the OLED performs a soft greeting expression and the LEDs breathe blue-green to show a safer connected state. The strip is mapped as a zig zag for directional tests, so a physical position such as 1 can light LEDs 1, 11, 21, and 31. Do not carry main LED power through pogo pins; use face connectors only for detect or signal behavior.</p>
     </section>
     <section class="panel section">
       <h2>V2 Pin Map</h2>

@@ -151,7 +151,7 @@ Position 10 lights: 10, 20, 30, 40</code></pre>
         <li>Calculates <code>neighborCount</code> from 0 to 6.</li>
         <li>If <code>neighborCount == 0</code>, the node is alone and breathes purple.</li>
         <li>If <code>neighborCount</code> changes from 0 to 1 or more, the OLED performs a yes/nod greeting.</li>
-        <li>If one or more faces stay connected, the matching zig zag positions glow green/blue.</li>
+        <li>If one or more faces stay connected, the strip breathes in blue-green.</li>
         <li>If the count returns to 0, the OLED performs a no/head-shake and the module returns to purple.</li>
       </ul>
       <pre><code>Program state logic:
@@ -167,7 +167,7 @@ Position 10 lights: 10, 20, 30, 40</code></pre>
 
 1+ neighbors staying connected
   -> CONNECTED_IDLE
-  -> calm green/blue connected state
+  -> calm blue-green breathing state
 
 1+ to 0 neighbors
   -> NEIGHBOR_REMOVED

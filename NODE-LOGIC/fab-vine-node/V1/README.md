@@ -66,7 +66,7 @@ Visual behavior:
 
 - No neighbor: normal OLED eyes with a soft purple LED breath. The purple represents slight social anxiety while the module is alone, without feeling like an alarm.
 - First neighbor connected: OLED performs a soft yes/nod expression and LEDs pulse brighter green/blue. The red disappears completely when the module feels socially connected.
-- Still connected: calm connected idle state with occasional wink. The LED positions for connected faces remain visible in secure green/blue.
+- Still connected: calm connected idle state with occasional wink and a full-strip blue-green breathing pattern.
 - Neighbor removed: OLED performs a short no/head-shake expression, the anxious purple returns briefly, and the module settles back into idle.
 
 ## Pin Defaults
@@ -96,7 +96,7 @@ Physical positions repeat every ten LEDs:
 - Position `2` lights LEDs `2, 12, 22, 32`.
 - Position `10` lights LEDs `10, 20, 30, 40`.
 
-Default face-to-position map:
+Default face-to-position map for directional tests:
 
 - Face 1 -> position `1`
 - Face 2 -> position `3`

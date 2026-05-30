@@ -9,8 +9,8 @@ The first physical MVP uses `40` WS2812B / NeoPixel LEDs on `D10`.
 The LED strip communicates node state locally:
 
 - `NODE_IDLE` - soft purple anxious breathing pattern while the module is alone.
-- `NEIGHBOR_CONNECTED` - brighter green/blue greeting pulse with no red channel.
-- `CONNECTED_IDLE` - calm secure green/blue face-position lights with no red channel.
+- `NEIGHBOR_CONNECTED` - brighter blue-green full-strip greeting breath with no red channel.
+- `CONNECTED_IDLE` - calm secure blue-green full-strip breathing pattern with no red channel.
 - `NEIGHBOR_REMOVED` - short purple transition before returning to anxious idle.
 
 Color language:
@@ -21,7 +21,7 @@ Color language:
 
 ## Zig Zag Map
 
-V2 assumes the 40 LEDs are arranged as four physical lines of ten LEDs. The firmware does not split the strip into continuous sectors. Instead, it lights repeated positions in the zig zag.
+V2 assumes the 40 LEDs are arranged as four physical lines of ten LEDs. The firmware keeps this zig zag map available for directional tests, even though the current connected state uses a full-strip blue-green breathing pattern.
 
 Example:
 
