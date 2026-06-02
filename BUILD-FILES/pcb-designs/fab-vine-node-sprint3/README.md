@@ -13,6 +13,8 @@ This folder contains the Sprint 3 PCB package received from the board team. It i
 - `previews/pcb-layout-bottom.jpeg` - bottom copper/layout preview.
 - `previews/pcb-3d-top.jpeg` - top 3D preview.
 - `previews/pcb-3d-bottom.jpeg` - bottom 3D preview.
+- `3d-model/OBJ_PCB_FabVine.obj` - PCB 3D model geometry.
+- `3d-model/OBJ_PCB_FabVine.mtl` - material file used by the PCB 3D model.
 - `reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx` - Fab Vine Sprint 3 pinout workbook.
 - `reference/XIAO_ESP32C6_Pinout.xlsx` - official Seeed XIAO ESP32-C6 pinout sheet.
 
@@ -59,4 +61,3 @@ The current tested node firmware is still the Sprint 2 prototype. It uses:
 - Detect-to-ground behavior with `INPUT_PULLUP`.
 
 Sprint 3 PCB documentation is the next hardware direction. Firmware must be updated before the Sprint 3 PCB pinout can be tested on the physical modules.
-
