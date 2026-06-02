@@ -24,8 +24,9 @@
       <div class="eyebrow">Node V1 / Wiring + Firmware</div>
       <h1>How the current Fab Vine node is connected and programmed.</h1>
       <p class="lead">
-        This manual explains the current six-face prototype: how the XIAO ESP32-C6 is wired,
+        This manual explains the current tested Sprint 2 firmware: how the XIAO ESP32-C6 is wired,
         how each face detects a neighbor, how the OLED and LEDs connect, and what the program does.
+        The Sprint 3 PCB package uses a newer TX/RX connector direction documented separately.
       </p>
     </section>
 
@@ -44,6 +45,19 @@
         <li>Vecinos: 6 caras, cada una con un pin de deteccion.</li>
         <li>Conteo: el programa cuenta de 0 a 6 caras ocupadas.</li>
       </ul>
+    </section>
+
+    <section class="panel section">
+      <h2>Sprint 2 vs Sprint 3</h2>
+      <p>
+        Este manual documenta el firmware Sprint 2 que ya fue probado en los modulos. El paquete PCB Sprint 3
+        cambia la logica de conectores: <code>D6</code> pasa a ser TX comun, las caras escuchan por RX
+        y ya no se detecta vecino conectando cada cara a <code>GND</code>. Ese nuevo pinout todavia requiere
+        una actualizacion de firmware.
+      </p>
+      <div class="nav">
+        <a class="button primary" href="./node-pcb-sprint3.html">Open PCB Sprint 3 Manual</a>
+      </div>
     </section>
 
     <section class="panel section">
