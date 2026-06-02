@@ -27,13 +27,13 @@
       </ul>
     </section>
     <section class="panel section">
-      <h2>Current MVP</h2>
+      <h2>Current MVP / Sprint 2 Firmware</h2>
       <p>The current firmware is an offline six-face physical-neighbor test. Each face has a DETECT line using an internal pullup: no neighbor reads HIGH, and a connected neighbor pulls that face to GND so it reads LOW. The firmware counts occupied faces from 0 to 6.</p>
       <p>When the module is alone, the 40 WS2812B LEDs breathe in purple to suggest slight social anxiety without feeling like an alarm. When contact is detected, the red disappears: the OLED performs a soft greeting expression and the LEDs breathe blue-green to show a safer connected state. Sprint 2 adds a shared <code>D8</code> data line so two modules can elect a leader through a random claim: the first module to claim the line holds it <code>LOW</code> and becomes leader, while the other stays follower. The firmware uses the internal pull-up on <code>D8</code>; an external <code>10k</code> pull-up to <code>3V3</code> is recommended later but is not required for the current bench test. Do not carry main LED power through pogo pins; use face connectors only for detect or signal behavior.</p>
     </section>
     <section class="panel section">
-      <h2>V2 Pin Map</h2>
-      <p>Use this table for the Fab Vine wiring, and the official Seeed pinout image below to locate each pin physically on the front or back of the board.</p>
+      <h2>Sprint 2 Firmware Pin Map</h2>
+      <p>Use this table for the currently tested firmware. The Sprint 3 PCB uses a different TX/RX pinout documented in the PCB manual.</p>
       <table>
         <thead><tr><th>Function</th><th>XIAO pin</th><th>Behavior</th></tr></thead>
         <tbody>
@@ -50,6 +50,18 @@
           <tr><td>LED data</td><td><code>D10</code></td><td>WS2812B / NeoPixel data</td></tr>
         </tbody>
       </table>
+    </section>
+    <section class="panel section">
+      <h2>Sprint 3 PCB Direction</h2>
+      <p>
+        The next PCB direction replaces detect-to-ground contacts with active TX/RX signaling:
+        <code>D6</code> becomes the common social TX, face RX pins are <code>D9,D1,D2,D3,D8,D7</code>,
+        and <code>D0</code> remains free. This is documented as a ready-to-fabricate PCB package, but the
+        current node firmware must still be updated before testing that pinout.
+      </p>
+      <div class="nav">
+        <a class="button primary" href="./node-pcb-sprint3.html">Open PCB Sprint 3 Manual</a>
+      </div>
     </section>
     <section class="panel section">
       <h2>Official XIAO Pinout</h2>
@@ -76,6 +88,7 @@
       <h2>Open Specific Resources</h2>
       <div class="nav">
         <a class="button primary" href="./node-wiring-program.html">Wiring + Program Manual</a>
+        <a class="button primary" href="./node-pcb-sprint3.html">PCB Sprint 3 Manual</a>
         <a class="button primary" href="./bom-v1.html">Module V1 BOM</a>
         <a class="button primary" href="./oled-expressions.html">OLED Expressions Manual</a>
         <a class="button" href="../NODE-LOGIC/fab-vine-node/V1/tools/oled-expression-preview.html">OLED Preview</a>

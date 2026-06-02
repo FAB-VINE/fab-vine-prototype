@@ -102,7 +102,7 @@ Official XIAO ESP32-C6 pinout reference:
 
 - Local manual image: `../../../MANUALS/assets/xiao-esp32c6-official-pinout.png`
 - Original Seeed resource: `https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/#resources`
-- Seeed pinout sheet archived in the manual assets folder: `../../../MANUALS/assets/XIAO_ESP32C6_Pinout.xlsx`
+- Seeed pinout sheet archived with the Sprint 3 PCB references: `../../../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/reference/XIAO_ESP32C6_Pinout.xlsx`
 
 Do not carry main LED power through pogo pins. Use face connectors for detect/signal only, and keep 5V/GND LED power on suitable power wiring.
 

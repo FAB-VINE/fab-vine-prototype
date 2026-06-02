@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node PCB Sprint 3 | Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="./node-v1.html">Node V1</a>
+        <a href="./node-wiring-program.html">Wiring + Program</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">PCB Sprint 3 / Ready To Fabricate</div>
+      <h1>Fab Vine node PCB package for the next hardware sprint.</h1>
+      <p class="lead">
+        This manual documents the Sprint 3 board package, pinout direction, connector logic, and fabrication files.
+        The current tested firmware is still Sprint 2; this PCB direction needs a firmware update before hardware testing.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Package Status</h2>
+      <ul>
+        <li>Status: <code>Ready to fabricate</code>.</li>
+        <li>Package date: <code>2026-06-01</code>.</li>
+        <li>Board target: Fab Vine node PCB for Seeed Studio XIAO ESP32-C6.</li>
+        <li>Gerber package: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/gerbers/Gerber_FabVine_PCB_FabVine_2026-06-01.zip">download ZIP</a>.</li>
+        <li>Pinout workbook: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx">download Excel</a>.</li>
+      </ul>
+    </section>
+
+    <section class="panel section">
+      <h2>Board Previews</h2>
+      <div class="two-col">
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-layout-top.jpeg" alt="Fab Vine Sprint 3 PCB top layout preview">
+          <p class="figure-caption">Top layout preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-layout-bottom.jpeg" alt="Fab Vine Sprint 3 PCB bottom layout preview">
+          <p class="figure-caption">Bottom layout preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-3d-top.jpeg" alt="Fab Vine Sprint 3 PCB top 3D preview">
+          <p class="figure-caption">Top 3D preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-3d-bottom.jpeg" alt="Fab Vine Sprint 3 PCB bottom 3D preview">
+          <p class="figure-caption">Bottom 3D preview.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Sprint 3 Pinout</h2>
+      <p>
+        Sprint 3 changes the neighbor system from detect-to-ground contacts to active TX/RX signaling.
+        The module sends presence from one common TX pin and listens through one RX pin per face.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Pin / Pad XIAO</th><th>GPIO real</th><th>Official capacity</th><th>Fab Vine function</th><th>Sprint 3 use</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>D0</code></td><td><code>GPIO0</code></td><td>Digital, analog A0, LP_GPIO0</td><td>Future expansion</td><td>Free / reserved</td><td>Free</td></tr>
+            <tr><td><code>D1</code></td><td><code>GPIO1</code></td><td>Digital, analog A1, LP_GPIO1</td><td>Listen to neighbor on face 2</td><td><code>FACE_2_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D2</code></td><td><code>GPIO2</code></td><td>Digital, analog A2, LP_GPIO2</td><td>Listen to neighbor on face 3</td><td><code>FACE_3_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D3</code></td><td><code>GPIO21</code></td><td>Digital, SDIO_DATA1</td><td>Listen to neighbor on face 4</td><td><code>FACE_4_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D4</code></td><td><code>GPIO22</code></td><td>Digital, I2C SDA, SDIO_DATA2</td><td>OLED display data</td><td><code>OLED_SDA</code></td><td>Used</td></tr>
+            <tr><td><code>D5</code></td><td><code>GPIO23</code></td><td>Digital, I2C SCL, SDIO_DATA3</td><td>OLED display clock</td><td><code>OLED_SCL</code></td><td>Used</td></tr>
+            <tr><td><code>D6</code></td><td><code>GPIO16</code></td><td>Digital, UART TX</td><td>Transmit common social presence to all faces</td><td><code>NEIGHBOR_TX_COMMON</code></td><td>Used</td></tr>
+            <tr><td><code>D7</code></td><td><code>GPIO17</code></td><td>Digital, UART RX</td><td>Listen to neighbor on face 6</td><td><code>FACE_6_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D8</code></td><td><code>GPIO19</code></td><td>Digital, SPI SCK, SDIO_CLK</td><td>Listen to neighbor on face 5</td><td><code>FACE_5_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D9</code></td><td><code>GPIO20</code></td><td>Digital, SPI MISO, SDIO_DATA0</td><td>Listen to neighbor on face 1</td><td><code>FACE_1_RX</code></td><td>Used</td></tr>
+            <tr><td><code>D10</code></td><td><code>GPIO18</code></td><td>Digital, SPI MOSI, SDIO_CMD</td><td>Control WS2812B / NeoPixel LED strip</td><td><code>LED_DATA</code></td><td>Used</td></tr>
+            <tr><td><code>3V3</code></td><td>Power</td><td>3.3V logic rail</td><td>OLED and logic references</td><td><code>3V3_LOGIC</code></td><td>Used</td></tr>
+            <tr><td><code>5V / VBUS</code></td><td>Power</td><td>5V from USB or external 5V</td><td>Main power or LED rail, depending on power design</td><td><code>5V_POWER</code></td><td>Use with care</td></tr>
+            <tr><td><code>GND</code></td><td>Power</td><td>Common ground</td><td>Ground for module and face connectors</td><td><code>GND</code></td><td>Used</td></tr>
+            <tr><td><code>EN</code></td><td>Control</td><td>Enable / reset</td><td>Microcontroller reset</td><td><code>RESET_ENABLE</code></td><td>Reserved</td></tr>
+            <tr><td><code>BOOT</code></td><td>Control / GPIO9</td><td>Boot / programming mode</td><td>Programming and recovery</td><td><code>BOOT_MODE</code></td><td>Reserved</td></tr>
+            <tr><td><code>BAT+</code></td><td>Power</td><td>Battery positive input</td><td>Future battery support</td><td><code>BATTERY_POSITIVE</code></td><td>Reserved</td></tr>
+            <tr><td><code>BAT-</code></td><td>Power</td><td>Battery negative input</td><td>Future battery support</td><td><code>BATTERY_NEGATIVE</code></td><td>Reserved</td></tr>
+            <tr><td><code>MTDI</code></td><td>Debug</td><td>JTAG debug</td><td>Future expansion / development test pad</td><td>Free</td><td>Free</td></tr>
+            <tr><td><code>MTDO</code></td><td>Debug</td><td>JTAG debug</td><td>Future expansion / development test pad</td><td>Free</td><td>Free</td></tr>
+            <tr><td><code>MTCK</code></td><td>Debug</td><td>JTAG debug</td><td>Future expansion / development test pad</td><td>Free</td><td>Free</td></tr>
+            <tr><td><code>MTMS</code></td><td>Debug</td><td>JTAG debug</td><td>Future expansion / development test pad</td><td>Free</td><td>Free</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Face Connector Logic</h2>
+      <p>
+        Every PCB can be identical if each face connector is physically mirrored so that TX lands on RX,
+        RX lands on TX, and ground lands on ground.
+      </p>
+      <pre><code>Each face carries:
+
+GND
+TX_COMMON = D6
+RX_FACE_n = unique face RX pin
+
+When two modules connect:
+
+Module A GND &lt;----&gt; Module B GND
+Module A TX  ----&gt; Module B RX
+Module A RX  &lt;---- Module B TX</code></pre>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Face</th><th>RX unique pin</th><th>TX common pin</th><th>Ground</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Face 1</td><td><code>D9</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+            <tr><td>Face 2</td><td><code>D1</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+            <tr><td>Face 3</td><td><code>D2</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+            <tr><td>Face 4</td><td><code>D3</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+            <tr><td>Face 5</td><td><code>D8</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+            <tr><td>Face 6</td><td><code>D7</code></td><td><code>D6</code></td><td><code>GND</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Firmware Compatibility</h2>
+      <p>
+        The current tested firmware is still Sprint 2. It uses <code>D8</code> as the shared data/signal line
+        and uses detect-to-ground inputs on <code>D0,D1,D2,D3,D6,D7</code>. Sprint 3 requires a firmware update
+        before testing this PCB pinout on physical modules.
+      </p>
+      <p>
+        A separate communication experiment also exists in
+        <code>NODE-LOGIC/fab-vine-node/V1/firmware/neighbor-communication/</code>; it is a prototype reference,
+        not the current production node firmware.
+      </p>
+    </section>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>
