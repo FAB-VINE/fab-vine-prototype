@@ -13,6 +13,7 @@ This folder contains the Sprint 3 PCB package received from the board team. It i
 - `previews/pcb-layout-bottom.jpeg` - bottom copper/layout preview.
 - `previews/pcb-3d-top.jpeg` - top 3D preview.
 - `previews/pcb-3d-bottom.jpeg` - bottom 3D preview.
+- `schematics/fab-vine-pcb-sprint3-schematic.jpeg` - PCB schematic image.
 - `3d-model/OBJ_PCB_FabVine.obj` - PCB 3D model geometry.
 - `3d-model/OBJ_PCB_FabVine.mtl` - material file used by the PCB 3D model.
 - `reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx` - Fab Vine Sprint 3 pinout workbook.
