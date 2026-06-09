@@ -36,6 +36,7 @@
         <li>Package date: <code>2026-06-01</code>.</li>
         <li>Board target: Fab Vine node PCB for Seeed Studio XIAO ESP32-C6.</li>
         <li>Gerber package: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/gerbers/Gerber_FabVine_PCB_FabVine_2026-06-01.zip">download ZIP</a>.</li>
+        <li>Schematic: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/schematics/fab-vine-pcb-sprint3-schematic.jpeg">open JPEG</a>.</li>
         <li>Pinout workbook: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx">download Excel</a>.</li>
         <li>PCB 3D model: <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/3d-model/OBJ_PCB_FabVine.obj">download OBJ</a> + <a href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/3d-model/OBJ_PCB_FabVine.mtl">download MTL</a>.</li>
       </ul>
@@ -64,6 +65,18 @@
       <p>
         The editable PCB 3D model is included as an OBJ file with its matching MTL material file.
         Keep both files in the same folder when opening the model in a 3D viewer or CAD workflow.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Schematic</h2>
+      <p>
+        This is the Sprint 3 PCB schematic from the board package. The six face connectors use a common
+        <code>D6/TX</code> line plus one dedicated RX line per face, with shared <code>GND</code>.
+      </p>
+      <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/schematics/fab-vine-pcb-sprint3-schematic.jpeg" alt="Fab Vine Sprint 3 PCB schematic showing XIAO ESP32-C6, face connectors, OLED, LED, power, and expansion headers">
+      <p class="figure-caption">
+        Sprint 3 schematic: identical PCBs connect by crossing each module's common TX into the opposite face RX.
       </p>
     </section>
 
