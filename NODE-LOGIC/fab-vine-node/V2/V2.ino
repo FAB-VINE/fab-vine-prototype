@@ -2,6 +2,7 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_NeoPixel.h>
 
 #include "src/PacketCommunication.h"
 
@@ -36,7 +37,12 @@ Faces 6 -> Top
 #define OLED_SDA_PIN D4
 #define OLED_SCL_PIN D5
 
+#define LED_STRIP_PIN D10
+#define LED_COUNT 40
+
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_NeoPixel pixels(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
+
 
 
 SoftwareSerial SerialLeft(PIN_LEFT_RX, NO_TX_PIN);
@@ -107,7 +113,7 @@ void setup() {
   processState();
 
   Serial.begin(BAUD_RATE);
-  Serial1.begin(BAUD_RATE, SERIAL_8N1, D7, D6);
+  Serial1.begin(BAUD_RATE, SERIAL_8N1, -1, D6);
 
   for(int i=0; i<FACE_COUNT; ++i){
     rxPorts[i]->begin(BAUD_RATE);
@@ -118,6 +124,10 @@ void setup() {
   // SerialTop.begin(BAUD_RATE);
   // SerialBottom.begin(BAUD_RATE);
 
+  pixels.begin();
+  pixels.clear();
+  pixels.show();
+  
   Wire.begin(OLED_SDA_PIN, OLED_SCL_PIN);
 
   while (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
@@ -135,7 +145,6 @@ void loop() {
     lastBlinkTime = currentMillis;
     isLedOn = !isLedOn;
     digitalWrite(LED_PIN, isLedOn);
-    Serial.println(blinkInterval);
   }
 
   // SEND
@@ -248,7 +257,7 @@ void processFaceDetection(const unsigned long& currentTime){
 }
 
 void updateDisplay(){
-display.clearDisplay();
+  display.clearDisplay();
   display.setTextSize(3);
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
@@ -260,6 +269,13 @@ display.clearDisplay();
   display.println(hasNeighbor[FaceBottom]? "B" : ".");
 
   display.display();
+
+  uint32_t color = pixels.Color(255 - selfState, 0, selfState);
+  for (int i = LED_COUNT - 1; i > 0; i--) {
+    pixels.setPixelColor(i, pixels.getPixelColor(i-1));
+  }
+  pixels.setPixelColor(0, color);
+  pixels.show();
 }
 
 void processState(){
