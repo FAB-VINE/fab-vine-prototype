@@ -9,7 +9,7 @@
 #define FACE_COUNT 4
 #define LED_PIN 15
 //////////////// Serial port definitions ////////////////////
-#define BAUD_RATE 9600
+#define BAUD_RATE 19200
 
 #define NO_TX_PIN -1
 
@@ -44,12 +44,14 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Adafruit_NeoPixel pixels(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
 
+enum Face : uint8_t {FaceLeft, FaceRight, FaceTop, FaceBottom};
 
 SoftwareSerial SerialLeft(PIN_LEFT_RX, NO_TX_PIN);
 SoftwareSerial SerialRight(PIN_RIGHT_RX, NO_TX_PIN);
 SoftwareSerial SerialTop(PIN_TOP_RX, NO_TX_PIN);
 SoftwareSerial SerialBottom(PIN_BOTTOM_RX, NO_TX_PIN);
 
+// keep the same order as Face enum to correctly address each face across the code
 SoftwareSerial* rxPorts[FACE_COUNT] = {&SerialLeft, &SerialRight, &SerialTop, &SerialBottom};
 
 
@@ -79,16 +81,7 @@ struct PacketData{
 };
 
 PacketData broadcastData;
-
-PacketData rightNeighborData;
-PacketData leftNeighborData;
-PacketData topNeighborData;
-PacketData bottomNeighborData;
-
-// PacketReciever<PacketData> recieverLeft;
-// PacketReciever<PacketData> recieverRight;
-// PacketReciever<PacketData> recieverTop;
-// PacketReciever<PacketData> recieverBottom;
+PacketData neighborData[FACE_COUNT];
 
 PacketReciever<PacketData> faceRecivers[FACE_COUNT];
 
@@ -97,14 +90,20 @@ PacketReciever<PacketData> faceRecivers[FACE_COUNT];
 
 ///////////// Negibors Detection /////
 
-enum Face : uint8_t {FaceLeft, FaceRight, FaceTop, FaceBottom};
 
 unsigned long neighborsTimeOut = 3000;
-unsigned long lastSeen[FACE_COUNT] = {0};
-bool hasNeighbor[FACE_COUNT] = {false, false};
+unsigned long lastSeen[FACE_COUNT];
+bool hasNeighbor[FACE_COUNT];
 
 ///////////// end Negibors Detection /////
+
 void setup() {   
+  // reset state arrays
+  for (int face=0; face<FACE_COUNT; face++) {
+    lastSeen[face] = 0;
+    hasNeighbor[face] = false;
+  }
+
   // initialize inbuilt LED pin as an output.
   pinMode(LED_PIN, OUTPUT);
 
@@ -118,11 +117,6 @@ void setup() {
   for(int i=0; i<FACE_COUNT; ++i){
     rxPorts[i]->begin(BAUD_RATE);
   }
-
-  // SerialLeft.begin(BAUD_RATE);
-  // SerialRight.begin(BAUD_RATE);
-  // SerialTop.begin(BAUD_RATE);
-  // SerialBottom.begin(BAUD_RATE);
 
   pixels.begin();
   pixels.clear();
@@ -160,49 +154,20 @@ void loop() {
   }
 
   // RECIEVE 
-  while (SerialLeft.available()>0) {
-    if(faceRecivers[FaceLeft].processIncomingData(SerialLeft, leftNeighborData)){
-      
-      lastSeen[FaceLeft] = currentMillis;
-      hasNeighbor[FaceLeft] = true;
+  for (uint8_t i=0; i<FACE_COUNT; ++i) {
+    // loop all faces
+    Face face = (Face) i;
+    // proces serial buffer
+    while (rxPorts[face]->available()>0) {
+      if(faceRecivers[face].processIncomingData(rxPorts[face]->read(), neighborData[face])){
+        
+        lastSeen[face] = currentMillis;
+        hasNeighbor[face] = true;
 
-      leftNeighborState =  leftNeighborData.state;
-      Serial.print("Left: ");
-      Serial.println(leftNeighborState);
-    }
-  }
-  while (SerialRight.available()>0) {
-
-    if(faceRecivers[FaceRight].processIncomingData(SerialRight, rightNeighborData)){
-      
-      lastSeen[FaceRight] = currentMillis;
-      hasNeighbor[FaceRight] = true;
-      
-      rightNeighborState = rightNeighborData.state;
-      Serial.print("Right: ");
-      Serial.println(rightNeighborState);
-    }
-  }
-  while (SerialTop.available()>0) {
-    if(SerialTop.available() && faceRecivers[FaceTop].processIncomingData(SerialTop, topNeighborData)){
-      
-      lastSeen[FaceTop] = currentMillis;
-      hasNeighbor[FaceTop] = true;
-      
-      topNeighborState = topNeighborData.state;
-      Serial.print("Top: ");
-      Serial.println(topNeighborState);
-    }
-  }
-  while (SerialBottom.available()>0) {
-    if(SerialBottom.available() && faceRecivers[FaceBottom].processIncomingData(SerialBottom, bottomNeighborData)){
-      
-      lastSeen[FaceBottom] = currentMillis;
-      hasNeighbor[FaceBottom] = true;
-      
-      bottomNeighborState = bottomNeighborData.state;
-      Serial.print("Bottom: ");
-      Serial.println(bottomNeighborState);
+        Serial.print(face);
+        Serial.print(": ");
+        Serial.println(neighborData[face].state);
+      }
     }
   }
 
@@ -246,7 +211,7 @@ void processFaceDetection(const unsigned long& currentTime){
 
   // calculate grid pos
   if(hasNeighbor[FaceLeft]){
-    uint8_t leftNeighbors = leftNeighborData.neighborCount[FaceLeft];
+    uint8_t leftNeighbors = neighborData[FaceLeft].neighborCount[FaceLeft];
 
     broadcastData.neighborCount[FaceLeft] = leftNeighbors > 0? leftNeighbors + 1 : 1;
   }
@@ -280,17 +245,17 @@ void updateDisplay(){
 
 void processState(){
   float t = 0.187f;
-  if(hasNeighbor[FaceLeft] && leftNeighborState > selfState){
-    selfState = myLerp(selfState, leftNeighborState, t);
+  if(hasNeighbor[FaceLeft] && neighborData[FaceLeft].state > selfState){
+    selfState = myLerp(selfState, neighborData[FaceLeft].state, t);
   }
-  if(hasNeighbor[FaceRight] && rightNeighborState > selfState){
-    selfState = myLerp(selfState, rightNeighborState, t);
+  if(hasNeighbor[FaceRight] && neighborData[FaceRight].state > selfState){
+    selfState = myLerp(selfState, neighborData[FaceRight].state, t);
   }
-  if(hasNeighbor[FaceTop] && topNeighborState > selfState){
-    selfState = myLerp(selfState, topNeighborState, t);
+  if(hasNeighbor[FaceTop] && neighborData[FaceTop].state > selfState){
+    selfState = myLerp(selfState, neighborData[FaceTop].state, t);
   }
-  if(hasNeighbor[FaceBottom] && bottomNeighborState > selfState){
-    selfState = myLerp(selfState, bottomNeighborState, t);
+  if(hasNeighbor[FaceBottom] && neighborData[FaceBottom].state > selfState){
+    selfState = myLerp(selfState, neighborData[FaceBottom].state, t);
   }
   blinkInterval = selfState * 3;
 }

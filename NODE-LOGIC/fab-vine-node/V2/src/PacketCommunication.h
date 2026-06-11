@@ -64,7 +64,7 @@ class PacketReciever{
   public:
     PacketReciever() : index(0), receiving(false){}
     void reset();
-    bool processIncomingData(SoftwareSerial& serialPort,  T& recievedDataOut);
+    bool processIncomingData(byte incomingByte,  T& recievedDataOut);
 };
 
 
@@ -75,8 +75,8 @@ void PacketReciever<T>::reset(){
 }
 
 template <typename T>
-bool PacketReciever<T>::processIncomingData(SoftwareSerial& serialPort,  T& recievedDataOut){
-  byte incomingByte = serialPort.read();
+bool PacketReciever<T>::processIncomingData(byte incomingByte,  T& recievedDataOut){
+  // byte incomingByte = serialPort.read();
   if(incomingByte == START_MARKER){
     index = 0;
     receiving = true;
