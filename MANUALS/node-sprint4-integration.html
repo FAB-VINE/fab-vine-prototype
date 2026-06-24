@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node Sprint 4 Integration | Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="./node-pcb-sprint3.html">PCB Sprint 3</a>
+        <a href="./node-wiring-program.html">Wiring + Program</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">Node Sprint 4 / Integration Notes</div>
+      <h1>Documenting the new board direction, V3 program, interface, and dice-state logic.</h1>
+      <p class="lead">
+        This sprint connects the ready-to-fabricate PCB direction with the current V3 firmware work.
+        It documents what changed, where each file belongs, and what still needs to be validated on real modules.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Resumen del sprint</h2>
+      <p>
+        Sprint 4 es un sprint de integracion y documentacion. No reemplaza el paquete de fabricacion Sprint 3;
+        lo usa como base para probar el programa V3, la interfaz OLED, el comportamiento de LEDs y la logica
+        de estado tipo dado que se propaga entre nodos vecinos.
+      </p>
+      <ul>
+        <li>Placa base: paquete PCB Sprint 3 en <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code>.</li>
+        <li>Documentacion de integracion: <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code>.</li>
+        <li>Programa actual: <code>NODE-LOGIC/fab-vine-node/V3/V3.ino</code>.</li>
+        <li>Comunicacion por paquetes: <code>NODE-LOGIC/fab-vine-node/V3/src/PacketCommunication.h</code>.</li>
+        <li>Manual visible: este archivo en <code>MANUALS/node-sprint4-integration.html</code>.</li>
+      </ul>
+    </section>
+
+    <section class="panel section">
+      <h2>Ubicacion correcta de archivos</h2>
+      <p>
+        Para evitar confusion en el repo, cada tipo de avance queda en su lugar natural. Los manuales
+        navegables viven en <code>MANUALS</code>, los archivos de fabricacion viven en <code>BUILD-FILES</code>,
+        y el codigo del microcontrolador vive en <code>NODE-LOGIC</code>.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Contenido</th><th>Ubicacion</th><th>Motivo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Manual para colaboradores</td><td><code>MANUALS/node-sprint4-integration.html</code></td><td>Debe abrirse desde la biblioteca publica de manuales.</td></tr>
+            <tr><td>Notas de placa e integracion</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code></td><td>Explica decisiones de hardware sin mezclar codigo.</td></tr>
+            <tr><td>Firmware V3</td><td><code>NODE-LOGIC/fab-vine-node/V3/</code></td><td>Es la carpeta correcta para el programa del nodo.</td></tr>
+            <tr><td>PCB fabricable actual</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code></td><td>Contiene Gerbers, esquematico, referencias y previews reales.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Nueva placa</h2>
+      <p>
+        La nueva placa se basa en el cambio de Sprint 3: dejar de detectar vecinos solamente por contacto a
+        tierra y pasar a una arquitectura de comunicacion activa. Cada modulo transmite por un TX comun y
+        escucha por un RX distinto en cada cara.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Funcion</th><th>Pin XIAO</th><th>Uso en V3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>TX comun a todas las caras</td><td><code>D6</code></td><td><code>Serial1</code> envia paquetes a vecinos.</td></tr>
+            <tr><td>Face 1 / Bottom RX</td><td><code>D9</code></td><td>Escucha paquetes desde la cara inferior.</td></tr>
+            <tr><td>Face 2 / Front RX</td><td><code>D1</code></td><td>Escucha paquetes desde la cara frontal.</td></tr>
+            <tr><td>Face 3 / Left RX</td><td><code>D2</code></td><td>Escucha paquetes desde la cara izquierda.</td></tr>
+            <tr><td>Face 4 / Right RX</td><td><code>D3</code></td><td>Escucha paquetes desde la cara derecha.</td></tr>
+            <tr><td>Face 5 / Back RX</td><td><code>D8</code></td><td>Escucha paquetes desde la cara posterior.</td></tr>
+            <tr><td>Face 6 / Top RX</td><td><code>D7</code></td><td>Escucha paquetes desde la cara superior.</td></tr>
+            <tr><td>OLED SDA / SCL</td><td><code>D4</code> / <code>D5</code></td><td>Interfaz de ojos y marcadores de caras.</td></tr>
+            <tr><td>LED data</td><td><code>D10</code></td><td>Tira NeoPixel / WS2812B de 40 LEDs.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        El paquete fabricable sigue referenciado desde
+        <a href="./node-pcb-sprint3.html">Node PCB Sprint 3</a>. Sprint 4 documenta como esa placa se relaciona
+        con el firmware V3 y que pruebas faltan antes de cerrar la siguiente version.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Programa V3</h2>
+      <p>
+        El programa V3 convierte el nodo en una unidad social que transmite estado, escucha a sus seis caras
+        y actualiza la interfaz visual sin bloquear el loop principal. La comunicacion usa paquetes con marcador
+        de inicio, payload, checksum y marcador de fin.
+      </p>
+      <pre><code>Loop principal V3:
+
+1. Parpadea el LED integrado como senal de vida.
+2. Lee el boton para reiniciar el estado local.
+3. Cada segundo envia PacketData por D6 / Serial1.
+4. Escucha los seis RX con SoftwareSerial.
+5. Marca vecinos activos cuando llegan paquetes validos.
+6. Expira vecinos si pasan 3 segundos sin paquete.
+7. Actualiza OLED y LEDs en intervalos independientes.
+8. Cada 2 segundos recalcula selfState.</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>Interfaz OLED y LEDs</h2>
+      <p>
+        La interfaz ya no muestra solo numeros de debug. V3 usa ojos expresivos y pequenos marcadores de cara:
+        los marcadores se mantienen visibles mientras una cara espera vecino y desaparecen cuando esa cara esta
+        conectada.
+      </p>
+      <ul>
+        <li><code>EyesNormal</code>: mirada estable para estado base.</li>
+        <li><code>EyesBlink</code>: parpadeo cuando el nodo esta solo.</li>
+        <li><code>EyesWink</code>: gesto corto cuando hay pocos vecinos.</li>
+        <li><code>EyesLookLeft</code> / <code>EyesLookRight</code>: mirada lateral cuando hay tres o mas conexiones.</li>
+        <li>LEDs solos: respiracion morada.</li>
+        <li>LEDs conectados: respiracion azul/verde sin canal rojo.</li>
+        <li>LEDs con tres o mas vecinos: azul mas intenso y periodo un poco mas rapido.</li>
+      </ul>
+    </section>
+
+    <section class="panel section">
+      <h2>Logica de dado</h2>
+      <p>
+        El valor <code>selfState</code> funciona como una semilla o dado interno. Cada nodo arranca con un valor
+        pseudoaleatorio entre 5 y 254. Cuando detecta vecinos, promedia los estados recibidos y mueve su propio
+        estado hacia ese objetivo usando interpolacion suave.
+      </p>
+      <pre><code>Al iniciar:
+selfState = random(5, 254)
+
+Cada ciclo de computo:
+targetValue = promedio de estados vecinos activos
+selfState = lerp(selfState, targetValue, 0.187)
+blinkInterval = selfState * 3</code></pre>
+      <p>
+        Esto hace que el comportamiento no sea un simple encendido/apagado. La red tiende a sincronizarse
+        gradualmente, como si cada pieza negociara su estado con las piezas alrededor.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Pruebas pendientes</h2>
+      <ul>
+        <li>Probar dos placas reales conectadas cara a cara: TX comun de una placa debe llegar al RX de la otra.</li>
+        <li>Confirmar que <code>SoftwareSerial</code> puede escuchar las seis caras con la estabilidad necesaria.</li>
+        <li>Validar si el paquete actual necesita incluir mas informacion de posicion para mallas grandes.</li>
+        <li>Revisar alimentacion de LED strip antes de usar muchos nodos juntos.</li>
+        <li>Confirmar si el boton en <code>A0</code> seguira en la placa final o quedara solo para pruebas.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      Grow the network.
+    </footer>
+  </main>
+</body>
+</html>
