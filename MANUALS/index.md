@@ -7,6 +7,8 @@ Main HTML manual browser:
 - [Manual index](index.html)
 - [Getting started](getting-started.html)
 - [Design rules](design-rules.html)
+- [Node Sprint 4 integration](node-sprint4-integration.html)
+- [Node PCB Sprint 3](node-pcb-sprint3.html)
 - [OLED expressions manual](oled-expressions.html)
 
 General entry points:
