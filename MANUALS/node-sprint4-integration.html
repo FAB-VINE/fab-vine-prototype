@@ -22,148 +22,268 @@
 
     <section class="hero compact-hero">
       <div class="eyebrow">Node Sprint 4 / Integration Notes</div>
-      <h1>Documenting the new board direction, V3 program, interface, and dice-state logic.</h1>
+      <h1>New board integration, V3 firmware, node interface, and dice-state behavior.</h1>
       <p class="lead">
-        This sprint connects the ready-to-fabricate PCB direction with the current V3 firmware work.
-        It documents what changed, where each file belongs, and what still needs to be validated on real modules.
+        Sprint 4 documents how the ready-to-fabricate PCB direction connects to the current V3 firmware.
+        It brings the pinout, board package, packet logic, OLED/LED interface, and validation checklist into
+        one contributor-facing reference.
       </p>
     </section>
 
     <section class="panel section">
-      <h2>Resumen del sprint</h2>
+      <h2>Sprint Scope</h2>
       <p>
-        Sprint 4 es un sprint de integracion y documentacion. No reemplaza el paquete de fabricacion Sprint 3;
-        lo usa como base para probar el programa V3, la interfaz OLED, el comportamiento de LEDs y la logica
-        de estado tipo dado que se propaga entre nodos vecinos.
+        Sprint 4 is an integration and documentation sprint. It does not replace the Sprint 3 fabrication
+        package. Instead, it explains how that board direction is used by the V3 program and what needs to be
+        tested before the next physical build.
       </p>
       <ul>
-        <li>Placa base: paquete PCB Sprint 3 en <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code>.</li>
-        <li>Documentacion de integracion: <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code>.</li>
-        <li>Programa actual: <code>NODE-LOGIC/fab-vine-node/V3/V3.ino</code>.</li>
-        <li>Comunicacion por paquetes: <code>NODE-LOGIC/fab-vine-node/V3/src/PacketCommunication.h</code>.</li>
-        <li>Manual visible: este archivo en <code>MANUALS/node-sprint4-integration.html</code>.</li>
+        <li>Board base: Sprint 3 PCB package in <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code>.</li>
+        <li>Integration notes: <code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code>.</li>
+        <li>Current V3 firmware: <code>NODE-LOGIC/fab-vine-node/V3/V3.ino</code>.</li>
+        <li>Packet communication helper: <code>NODE-LOGIC/fab-vine-node/V3/src/PacketCommunication.h</code>.</li>
+        <li>Public manual page: <code>MANUALS/node-sprint4-integration.html</code>.</li>
       </ul>
     </section>
 
     <section class="panel section">
-      <h2>Ubicacion correcta de archivos</h2>
+      <h2>Repository Placement</h2>
       <p>
-        Para evitar confusion en el repo, cada tipo de avance queda en su lugar natural. Los manuales
-        navegables viven en <code>MANUALS</code>, los archivos de fabricacion viven en <code>BUILD-FILES</code>,
-        y el codigo del microcontrolador vive en <code>NODE-LOGIC</code>.
+        The sprint files are intentionally split by responsibility so the repository remains easy to review.
+        Human-readable manuals live in <code>MANUALS</code>, fabrication assets live in <code>BUILD-FILES</code>,
+        and microcontroller code lives in <code>NODE-LOGIC</code>.
       </p>
       <div class="table-scroll">
         <table class="bom-table">
           <thead>
-            <tr><th>Contenido</th><th>Ubicacion</th><th>Motivo</th></tr>
+            <tr><th>Content</th><th>Location</th><th>Reason</th></tr>
           </thead>
           <tbody>
-            <tr><td>Manual para colaboradores</td><td><code>MANUALS/node-sprint4-integration.html</code></td><td>Debe abrirse desde la biblioteca publica de manuales.</td></tr>
-            <tr><td>Notas de placa e integracion</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code></td><td>Explica decisiones de hardware sin mezclar codigo.</td></tr>
-            <tr><td>Firmware V3</td><td><code>NODE-LOGIC/fab-vine-node/V3/</code></td><td>Es la carpeta correcta para el programa del nodo.</td></tr>
-            <tr><td>PCB fabricable actual</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code></td><td>Contiene Gerbers, esquematico, referencias y previews reales.</td></tr>
+            <tr><td>Contributor-facing Sprint 4 manual</td><td><code>MANUALS/node-sprint4-integration.html</code></td><td>Browsable from the public manuals index.</td></tr>
+            <tr><td>Board integration notes</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint4/README.md</code></td><td>Documents hardware decisions without mixing them into firmware.</td></tr>
+            <tr><td>V3 node firmware</td><td><code>NODE-LOGIC/fab-vine-node/V3/</code></td><td>Keeps the current program next to its packet helper.</td></tr>
+            <tr><td>Fabrication-ready PCB package</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint3/</code></td><td>Contains Gerbers, schematic, previews, 3D model, and pinout references.</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <section class="panel section">
-      <h2>Nueva placa</h2>
+      <h2>Board Package</h2>
       <p>
-        La nueva placa se basa en el cambio de Sprint 3: dejar de detectar vecinos solamente por contacto a
-        tierra y pasar a una arquitectura de comunicacion activa. Cada modulo transmite por un TX comun y
-        escucha por un RX distinto en cada cara.
+        The current board package targets the Seeed Studio XIAO ESP32-C6 and moves the neighbor system from
+        simple detect-to-ground contacts into active serial-style face communication. Each node uses one shared
+        transmit pin and one receive pin per face.
+      </p>
+      <div class="nav">
+        <a class="button primary" href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/gerbers/Gerber_FabVine_PCB_FabVine_2026-06-01.zip">Download Gerbers</a>
+        <a class="button" href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx">Download Sprint 3 Pinout</a>
+        <a class="button" href="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/3d-model/OBJ_PCB_FabVine.obj">Download 3D Model</a>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Board Previews</h2>
+      <p>
+        These previews come from the active Sprint 3 board package. Sprint 4 uses them as the physical reference
+        while documenting how the V3 firmware should behave on this hardware direction.
+      </p>
+      <div class="two-col">
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-layout-top.jpeg" alt="Fab Vine Sprint 3 PCB top layout preview">
+          <p class="figure-caption">Top copper/layout preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-layout-bottom.jpeg" alt="Fab Vine Sprint 3 PCB bottom layout preview">
+          <p class="figure-caption">Bottom copper/layout preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-3d-top.jpeg" alt="Fab Vine Sprint 3 PCB top 3D preview">
+          <p class="figure-caption">Top 3D preview.</p>
+        </div>
+        <div>
+          <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/previews/pcb-3d-bottom.jpeg" alt="Fab Vine Sprint 3 PCB bottom 3D preview">
+          <p class="figure-caption">Bottom 3D preview.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Schematic Reference</h2>
+      <p>
+        The schematic shows the XIAO ESP32-C6, face connectors, OLED pins, LED data line, power rails, and
+        expansion headers. For Sprint 4, the most important check is that each physical face connector correctly
+        crosses one board's TX into the other board's RX.
+      </p>
+      <img class="manual-image" src="../BUILD-FILES/pcb-designs/fab-vine-node-sprint3/schematics/fab-vine-pcb-sprint3-schematic.jpeg" alt="Fab Vine Sprint 3 PCB schematic">
+      <p class="figure-caption">
+        Sprint 3 schematic used as the hardware base for Sprint 4 firmware integration.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>XIAO ESP32-C6 Pinout</h2>
+      <p>
+        The official XIAO ESP32-C6 pinout remains the base reference for checking Arduino pin names against
+        the physical pads and GPIO functions used by the board.
+      </p>
+      <img class="manual-image" src="./assets/xiao-esp32c6-official-pinout.png" alt="Official Seeed Studio XIAO ESP32-C6 pinout diagram">
+      <p class="figure-caption">
+        Official XIAO ESP32-C6 pinout reference used to verify the Fab Vine Sprint 3/Sprint 4 mapping.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Active Pin Mapping</h2>
+      <p>
+        V3 matches the active TX/RX direction: <code>D6</code> broadcasts the node packet and each face listens
+        on a dedicated RX pin. The OLED and LED strip keep their own dedicated pins.
       </p>
       <div class="table-scroll">
         <table class="bom-table">
           <thead>
-            <tr><th>Funcion</th><th>Pin XIAO</th><th>Uso en V3</th></tr>
+            <tr><th>Function</th><th>XIAO pin</th><th>V3 use</th><th>Physical face</th></tr>
           </thead>
           <tbody>
-            <tr><td>TX comun a todas las caras</td><td><code>D6</code></td><td><code>Serial1</code> envia paquetes a vecinos.</td></tr>
-            <tr><td>Face 1 / Bottom RX</td><td><code>D9</code></td><td>Escucha paquetes desde la cara inferior.</td></tr>
-            <tr><td>Face 2 / Front RX</td><td><code>D1</code></td><td>Escucha paquetes desde la cara frontal.</td></tr>
-            <tr><td>Face 3 / Left RX</td><td><code>D2</code></td><td>Escucha paquetes desde la cara izquierda.</td></tr>
-            <tr><td>Face 4 / Right RX</td><td><code>D3</code></td><td>Escucha paquetes desde la cara derecha.</td></tr>
-            <tr><td>Face 5 / Back RX</td><td><code>D8</code></td><td>Escucha paquetes desde la cara posterior.</td></tr>
-            <tr><td>Face 6 / Top RX</td><td><code>D7</code></td><td>Escucha paquetes desde la cara superior.</td></tr>
-            <tr><td>OLED SDA / SCL</td><td><code>D4</code> / <code>D5</code></td><td>Interfaz de ojos y marcadores de caras.</td></tr>
-            <tr><td>LED data</td><td><code>D10</code></td><td>Tira NeoPixel / WS2812B de 40 LEDs.</td></tr>
+            <tr><td>Common TX to all faces</td><td><code>D6</code></td><td><code>Serial1</code> sends packets to neighbors.</td><td>Shared by all six faces.</td></tr>
+            <tr><td>Face 1 RX</td><td><code>D9</code></td><td>Receives packets from the bottom connector.</td><td>Bottom</td></tr>
+            <tr><td>Face 2 RX</td><td><code>D1</code></td><td>Receives packets from the front connector.</td><td>Front</td></tr>
+            <tr><td>Face 3 RX</td><td><code>D2</code></td><td>Receives packets from the left connector.</td><td>Left</td></tr>
+            <tr><td>Face 4 RX</td><td><code>D3</code></td><td>Receives packets from the right connector.</td><td>Right</td></tr>
+            <tr><td>Face 5 RX</td><td><code>D8</code></td><td>Receives packets from the back/posterior connector.</td><td>Back / posterior</td></tr>
+            <tr><td>Face 6 RX</td><td><code>D7</code></td><td>Receives packets from the top connector.</td><td>Top</td></tr>
+            <tr><td>OLED SDA</td><td><code>D4</code></td><td>I2C display data.</td><td>Interface</td></tr>
+            <tr><td>OLED SCL</td><td><code>D5</code></td><td>I2C display clock.</td><td>Interface</td></tr>
+            <tr><td>LED data</td><td><code>D10</code></td><td>Controls the 40-pixel WS2812B / NeoPixel strip.</td><td>Lighting</td></tr>
+            <tr><td>Test button</td><td><code>A0</code></td><td>Bench input used to reset <code>selfState</code>.</td><td>Development only unless kept in the final board.</td></tr>
           </tbody>
         </table>
       </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Face Connector Logic</h2>
       <p>
-        El paquete fabricable sigue referenciado desde
-        <a href="./node-pcb-sprint3.html">Node PCB Sprint 3</a>. Sprint 4 documenta como esa placa se relaciona
-        con el firmware V3 y que pruebas faltan antes de cerrar la siguiente version.
+        Every board can remain identical if each connector is mirrored so that TX lands on the opposite board's
+        RX and both boards share ground. This is the key physical rule behind the new board direction.
+      </p>
+      <pre><code>Each face carries:
+
+GND
+TX_COMMON = D6
+RX_FACE_n = unique receive pin
+
+When two modules connect:
+
+Module A GND &lt;----&gt; Module B GND
+Module A TX  ----&gt; Module B RX
+Module A RX  &lt;---- Module B TX</code></pre>
+    </section>
+
+    <section class="panel section">
+      <h2>V3 Firmware Architecture</h2>
+      <p>
+        The V3 program turns the node into a social unit that broadcasts its internal state, listens to all six
+        faces, expires inactive neighbors, and refreshes the OLED and LEDs without blocking the main loop.
+      </p>
+      <pre><code>V3 loop overview:
+
+1. Blink the built-in LED as a heartbeat.
+2. Read the test button and reset local state when pressed.
+3. Every second, send PacketData through D6 / Serial1.
+4. Listen to six RX-only SoftwareSerial ports.
+5. Mark a face as connected when a valid packet arrives.
+6. Expire a face after 3000 ms without a valid packet.
+7. Update OLED and LEDs on independent frame timers.
+8. Every 2 seconds, recompute selfState from active neighbors.</code></pre>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>File</th><th>Responsibility</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>V3.ino</code></td><td>Main node behavior: pins, serial ports, neighbor tracking, OLED, LEDs, and dice-state logic.</td></tr>
+            <tr><td><code>src/PacketCommunication.h</code></td><td>Packet framing, checksum generation, packet validation, send helper, and receive helper.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Packet Format</h2>
+      <p>
+        Nodes exchange a small binary payload. The helper wraps the payload with a start marker, checksum
+        complement, and end marker so each receiver can reject malformed packets.
+      </p>
+      <pre><code>PacketData payload:
+
+struct PacketData {
+  uint8_t state;
+  uint8_t neighborCount[2];
+};
+
+Frame:
+
+START_MARKER 0xAA
+payload bytes
+checksum complement
+END_MARKER 0x55</code></pre>
+      <p>
+        The current packet already supports state propagation. The <code>neighborCount</code> field is available
+        for grid-position experiments and may need a clearer structure before larger multi-node tests.
       </p>
     </section>
 
     <section class="panel section">
-      <h2>Programa V3</h2>
+      <h2>OLED And LED Interface</h2>
       <p>
-        El programa V3 convierte el nodo en una unidad social que transmite estado, escucha a sus seis caras
-        y actualiza la interfaz visual sin bloquear el loop principal. La comunicacion usa paquetes con marcador
-        de inicio, payload, checksum y marcador de fin.
-      </p>
-      <pre><code>Loop principal V3:
-
-1. Parpadea el LED integrado como senal de vida.
-2. Lee el boton para reiniciar el estado local.
-3. Cada segundo envia PacketData por D6 / Serial1.
-4. Escucha los seis RX con SoftwareSerial.
-5. Marca vecinos activos cuando llegan paquetes validos.
-6. Expira vecinos si pasan 3 segundos sin paquete.
-7. Actualiza OLED y LEDs en intervalos independientes.
-8. Cada 2 segundos recalcula selfState.</code></pre>
-    </section>
-
-    <section class="panel section">
-      <h2>Interfaz OLED y LEDs</h2>
-      <p>
-        La interfaz ya no muestra solo numeros de debug. V3 usa ojos expresivos y pequenos marcadores de cara:
-        los marcadores se mantienen visibles mientras una cara espera vecino y desaparecen cuando esa cara esta
-        conectada.
+        V3 replaces the earlier numeric debug display with a character-like interface. The OLED draws eyes and
+        small face markers; the LED strip shows the social state through breathing color and intensity.
       </p>
       <ul>
-        <li><code>EyesNormal</code>: mirada estable para estado base.</li>
-        <li><code>EyesBlink</code>: parpadeo cuando el nodo esta solo.</li>
-        <li><code>EyesWink</code>: gesto corto cuando hay pocos vecinos.</li>
-        <li><code>EyesLookLeft</code> / <code>EyesLookRight</code>: mirada lateral cuando hay tres o mas conexiones.</li>
-        <li>LEDs solos: respiracion morada.</li>
-        <li>LEDs conectados: respiracion azul/verde sin canal rojo.</li>
-        <li>LEDs con tres o mas vecinos: azul mas intenso y periodo un poco mas rapido.</li>
+        <li><code>EyesNormal</code>: stable default expression.</li>
+        <li><code>EyesBlink</code>: short blink while the node is alone.</li>
+        <li><code>EyesWink</code>: small social gesture when one or two neighbors are connected.</li>
+        <li><code>EyesLookLeft</code> / <code>EyesLookRight</code>: lateral glances when three or more faces are connected.</li>
+        <li>Open face markers remain visible while a face is waiting for a neighbor.</li>
+        <li>Connected face markers disappear once a valid packet is received on that face.</li>
+        <li>Alone state: purple breathing LEDs.</li>
+        <li>Connected state: blue/green breathing LEDs with no red channel.</li>
+        <li>Three or more neighbors: stronger blue and a slightly faster breathing period.</li>
       </ul>
     </section>
 
     <section class="panel section">
-      <h2>Logica de dado</h2>
+      <h2>Dice-State Logic</h2>
       <p>
-        El valor <code>selfState</code> funciona como una semilla o dado interno. Cada nodo arranca con un valor
-        pseudoaleatorio entre 5 y 254. Cuando detecta vecinos, promedia los estados recibidos y mueve su propio
-        estado hacia ese objetivo usando interpolacion suave.
+        <code>selfState</code> is the node's dice-like internal value. Each node starts with a pseudo-random
+        value between 5 and 254. When neighbors are active, the node averages the received states and gradually
+        moves its own value toward that target.
       </p>
-      <pre><code>Al iniciar:
+      <pre><code>Startup:
 selfState = random(5, 254)
 
-Cada ciclo de computo:
-targetValue = promedio de estados vecinos activos
+Every compute cycle:
+targetValue = average(active neighbor states)
 selfState = lerp(selfState, targetValue, 0.187)
 blinkInterval = selfState * 3</code></pre>
       <p>
-        Esto hace que el comportamiento no sea un simple encendido/apagado. La red tiende a sincronizarse
-        gradualmente, como si cada pieza negociara su estado con las piezas alrededor.
+        This makes the network feel less binary. A node does not simply switch on or off; its behavior drifts
+        toward the neighborhood, creating a soft synchronization effect across connected modules.
       </p>
     </section>
 
     <section class="panel section">
-      <h2>Pruebas pendientes</h2>
+      <h2>Validation Checklist</h2>
       <ul>
-        <li>Probar dos placas reales conectadas cara a cara: TX comun de una placa debe llegar al RX de la otra.</li>
-        <li>Confirmar que <code>SoftwareSerial</code> puede escuchar las seis caras con la estabilidad necesaria.</li>
-        <li>Validar si el paquete actual necesita incluir mas informacion de posicion para mallas grandes.</li>
-        <li>Revisar alimentacion de LED strip antes de usar muchos nodos juntos.</li>
-        <li>Confirmar si el boton en <code>A0</code> seguira en la placa final o quedara solo para pruebas.</li>
+        <li>Connect two real boards face-to-face and confirm TX/RX crossing works in both directions.</li>
+        <li>Confirm the physical connector order matches the V3 face map: bottom, front, left, right, back, top.</li>
+        <li>Test each RX pin individually before testing several faces at once.</li>
+        <li>Confirm <code>SoftwareSerial</code> remains stable when multiple faces receive traffic close together.</li>
+        <li>Confirm OLED and LED refresh stay smooth while packets arrive continuously.</li>
+        <li>Validate LED power routing before connecting many modules to the same supply.</li>
+        <li>Decide whether the <code>A0</code> test button stays in production or remains a bench-only feature.</li>
+        <li>Decide whether the packet needs stronger position data for larger grid assemblies.</li>
       </ul>
     </section>
 

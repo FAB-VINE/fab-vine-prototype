@@ -50,6 +50,29 @@ Module A TX  ----> Module B RX
 Module A RX  <---- Module B TX
 ```
 
+## Visual References
+
+The fabrication images remain in the Sprint 3 board package because those are the actual exported assets. Sprint 4 references them instead of duplicating files.
+
+| Reference | File |
+|---|---|
+| Top layout preview | `../fab-vine-node-sprint3/previews/pcb-layout-top.jpeg` |
+| Bottom layout preview | `../fab-vine-node-sprint3/previews/pcb-layout-bottom.jpeg` |
+| Top 3D preview | `../fab-vine-node-sprint3/previews/pcb-3d-top.jpeg` |
+| Bottom 3D preview | `../fab-vine-node-sprint3/previews/pcb-3d-bottom.jpeg` |
+| Schematic image | `../fab-vine-node-sprint3/schematics/fab-vine-pcb-sprint3-schematic.jpeg` |
+| Gerber package | `../fab-vine-node-sprint3/gerbers/Gerber_FabVine_PCB_FabVine_2026-06-01.zip` |
+| Sprint 3 pinout workbook | `../fab-vine-node-sprint3/reference/fab-vine-xiao-esp32c6-pinout-sprint3.xlsx` |
+| PCB OBJ model | `../fab-vine-node-sprint3/3d-model/OBJ_PCB_FabVine.obj` |
+
+Top layout preview:
+
+![Fab Vine PCB top layout](../fab-vine-node-sprint3/previews/pcb-layout-top.jpeg)
+
+Top 3D preview:
+
+![Fab Vine PCB top 3D preview](../fab-vine-node-sprint3/previews/pcb-3d-top.jpeg)
+
 ## Program Direction
 
 The V3 firmware sends a `PacketData` payload over the common TX line and listens to six RX ports. A face is considered connected when a valid packet arrives on that face. A neighbor is considered lost after 3 seconds without a valid packet.
@@ -103,4 +126,3 @@ This means the node behavior is not binary. Values move gradually through the ne
 - Confirm OLED and LED refresh remain smooth while packets are arriving.
 - Decide whether `A0` button reset remains in the production board or only in bench testing.
 - Validate LED power routing before testing many nodes on the same supply.
-
