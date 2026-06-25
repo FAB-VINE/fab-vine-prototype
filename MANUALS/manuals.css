@@ -498,37 +498,64 @@ pre {
   gap: 16px;
 }
 
-.media-pair {
+.media-section {
+  gap: 20px;
+}
+
+.media-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  grid-template-columns: minmax(190px, 0.55fr) minmax(0, 1.45fr);
   gap: 16px;
   align-items: stretch;
+}
+
+.media-pair {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.38fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.final-media {
+  padding-top: 18px;
+  border-top: 1px solid rgba(190, 255, 226, 0.14);
 }
 
 .media-card {
   display: grid;
   gap: 8px;
   margin: 0;
+  padding: 10px;
+  border: 1px solid rgba(190, 255, 226, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  align-content: start;
 }
 
 .media-card img,
 .media-card video {
   display: block;
   width: 100%;
-  border: 1px solid rgba(190, 255, 226, 0.16);
+  border: 1px solid rgba(190, 255, 226, 0.14);
   border-radius: 8px;
   background: #06100d;
 }
 
 .media-card.vertical img,
 .media-card.video video {
-  height: min(68vh, 520px);
+  height: min(66vh, 540px);
   object-fit: contain;
 }
 
 .media-card.wide img {
-  max-height: 560px;
+  height: min(50vh, 420px);
   object-fit: contain;
+}
+
+.final-media .media-card {
+  background:
+    linear-gradient(135deg, rgba(67, 255, 177, 0.08), rgba(113, 231, 255, 0.035)),
+    rgba(0, 0, 0, 0.2);
 }
 
 .media-card figcaption {
@@ -575,6 +602,7 @@ pre {
 @media (max-width: 860px) {
   .grid,
   .two-col,
+  .media-grid,
   .media-pair,
   .content-layout,
   .overview-grid,
