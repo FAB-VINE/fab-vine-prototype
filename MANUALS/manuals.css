@@ -498,6 +498,45 @@ pre {
   gap: 16px;
 }
 
+.media-pair {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.media-card {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.media-card img,
+.media-card video {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(190, 255, 226, 0.16);
+  border-radius: 8px;
+  background: #06100d;
+}
+
+.media-card.vertical img,
+.media-card.video video {
+  height: min(68vh, 520px);
+  object-fit: contain;
+}
+
+.media-card.wide img {
+  max-height: 560px;
+  object-fit: contain;
+}
+
+.media-card figcaption {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .callout {
   padding: 18px;
   border-color: rgba(67, 255, 177, 0.32);
@@ -536,6 +575,7 @@ pre {
 @media (max-width: 860px) {
   .grid,
   .two-col,
+  .media-pair,
   .content-layout,
   .overview-grid,
   .section-heading,
