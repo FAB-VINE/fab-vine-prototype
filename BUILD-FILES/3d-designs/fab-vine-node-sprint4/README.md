@@ -18,6 +18,7 @@ This folder contains the final Rhino and Grasshopper files for the Sprint 4 phys
 | `media/progress-1.jpeg` | Image | Sprint 4 modeling progress preview. |
 | `media/progress-2.jpeg` | Image | Sprint 4 modeling progress preview. |
 | `media/progress-3.mp4` | Video | Sprint 4 modeling progress clip. |
+| `media/progress-4.jpeg` | Image | Latest vertical Sprint 4 modeling progress preview. |
 
 ## Not Included
 
@@ -31,6 +32,8 @@ The source folder also contained Rhino backup and lock files. These are intentio
 ![Sprint 4 modeling progress 1](media/progress-1.jpeg)
 
 ![Sprint 4 modeling progress 2](media/progress-2.jpeg)
+
+![Sprint 4 latest vertical modeling progress](media/progress-4.jpeg)
 
 Video preview:
 
