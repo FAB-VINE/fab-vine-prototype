@@ -3,3 +3,5 @@ dist/
 .vite/
 .vite-dev.log
 *.local
+*.3dmbak
+*.rhl
