@@ -2,6 +2,7 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoMatrix.h>
 #include <Adafruit_SSD1306.h>
 #include <math.h>
 
@@ -15,22 +16,25 @@
 
 #define NO_TX_PIN -1
 
+////////// To enable face letters on display uncomment the next line
+#define DEBUG_MODE 
+
 /////
 /*
 Faces 1 -> Bottom
 Faces 2 -> Front
 Faces 3 -> Left
 Faces 4 -> Right
-Faces 5 -> Back
+Faces 5 -> Posterior
 Faces 6 -> Top
 */
 
-#define PIN_LEFT_RX D2
-#define PIN_RIGHT_RX D3
-#define PIN_TOP_RX D7
 #define PIN_BOTTOM_RX D9
 #define PIN_FRONT_RX D1
-#define PIN_POSTERIOR_RX D8
+#define PIN_LEFT_RX D2
+#define PIN_RIGHT_RX D7
+#define PIN_POSTERIOR_RX D3
+#define PIN_TOP_RX D8
 
 
 // oled
@@ -48,7 +52,7 @@ Faces 6 -> Top
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Adafruit_NeoPixel pixels(LED_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
-
+Adafruit_NeoMatrix screen(8,8,A0);
 
 enum Face : uint8_t { FaceLeft,
                       FaceRight,
@@ -135,7 +139,7 @@ void setup() {
   selfState = random(5, 254);
   processState();
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  // pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   Serial.begin(BAUD_RATE);
   Serial1.begin(BAUD_RATE, SERIAL_8N1, -1, D6);
@@ -147,6 +151,17 @@ void setup() {
   pixels.begin();
   pixels.clear();
   pixels.show();
+
+  screen.begin();
+  screen.clear();
+  screen.show();
+
+  
+  screen.setBrightness(40);
+  screen.setTextColor(screen.Color(255, 255, 0));
+  screen.setCursor(0, 0);
+  screen.print("HOLA");
+  screen.show();
 
   Wire.begin(OLED_SDA_PIN, OLED_SCL_PIN);
 
@@ -167,10 +182,10 @@ void loop() {
   }
 
   // detect press
-  if (digitalRead(BUTTON_PIN) == LOW) {
-    Serial.print("Button pressed");
-    selfState = 0;
-  }
+  // if (digitalRead(BUTTON_PIN) == LOW) {
+  //   Serial.print("Button pressed");
+  //   selfState = 0;
+  // }
 
   // SEND
   if (currentMillis - lastSendTime > sendInterval) {
@@ -316,6 +331,10 @@ void updateDisplay() {
 
   drawFaceConnectionMarkers();
 
+#ifdef DEBUG_MODE
+  drawConnectedFaceLetters();
+#endif
+
   display.display();
 }
 
@@ -327,7 +346,7 @@ void updateLeds(const unsigned long& currentMillis) {
   uint8_t blue = connected ? 130 : 178;
   uint8_t minLevel = connected ? 18 : 10;
   uint8_t maxLevel = connected ? 145 : 62;
-  unsigned long periodMs = connected ? 3000 : 2200;
+  unsigned long periodMs = blinkInterval * 2;
 
   if (connectedFaces >= 3) {
     green = 80;
@@ -368,6 +387,7 @@ uint8_t countConnectedFaces() {
   return connectedFaces;
 }
 
+
 void drawFaceConnectionMarkers() {
   // Physical face numbers:
   // 1 Bottom, 2 Front, 3 Left, 4 Right, 5 Back/Posterior, 6 Top.
@@ -383,11 +403,11 @@ void drawFaceConnectionMarkers() {
     display.drawFastHLine(2, 2, 8, SSD1306_WHITE);
     display.drawFastVLine(2, 2, 8, SSD1306_WHITE);
   }
-  if (!hasNeighbor[FaceRight]) {
+  if (!hasNeighbor[FacePosterior]) {
     display.drawFastHLine(118, 2, 8, SSD1306_WHITE);
     display.drawFastVLine(125, 2, 8, SSD1306_WHITE);
   }
-  if (!hasNeighbor[FacePosterior]) {
+  if (!hasNeighbor[FaceRight]) {
     display.drawFastHLine(118, 61, 8, SSD1306_WHITE);
     display.drawFastVLine(125, 53, 8, SSD1306_WHITE);
   }
@@ -436,25 +456,6 @@ void eyesLookRight() {
 
 void processState() {
   float t = 0.187f;
-
-  // if (hasNeighbor[FaceLeft] && neighborData[FaceLeft].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FaceLeft].state, t);
-  // }
-  // if (hasNeighbor[FaceRight] && neighborData[FaceRight].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FaceRight].state, t);
-  // }
-  // if (hasNeighbor[FaceTop] && neighborData[FaceTop].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FaceTop].state, t);
-  // }
-  // if (hasNeighbor[FaceBottom] && neighborData[FaceBottom].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FaceBottom].state, t);
-  // }
-  // if (hasNeighbor[FaceFront] && neighborData[FaceFront].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FaceFront].state, t);
-  // }
-  // if (hasNeighbor[FacePosterior] && neighborData[FacePosterior].state > selfState) {
-  //   selfState = myLerp(selfState, neighborData[FacePosterior].state, t);
-  // }
   unsigned int targetValue = 0;
   int neighborCount = 0;
   for(int i=0; i<FACE_COUNT; i++){
@@ -473,8 +474,24 @@ void processState() {
 
 float myLerp(float a, float b, float x) {
   float delta = x * (b - a);
-  // if (delta <= 1.0f) {
-  //   return b;
-  // }
   return a + delta;
 }
+
+
+#ifdef DEBUG_MODE
+//// DEBUG HELPER ////
+
+void drawConnectedFaceLetters(){
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(10, 2);
+    display.print(selfState);
+    display.setCursor(20, 50);
+    display.print(hasNeighbor[FaceLeft] ? "L" : ".");
+    display.print(hasNeighbor[FaceRight] ? "R" : ".");
+    display.print(hasNeighbor[FaceTop] ? "T" : ".");
+    display.print(hasNeighbor[FaceBottom] ? "B" : ".");
+    display.print(hasNeighbor[FaceFront] ? "F" : ".");
+    display.print(hasNeighbor[FacePosterior] ? "P" : ".");
+}
+#endif
