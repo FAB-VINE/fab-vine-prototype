@@ -14,6 +14,13 @@ Fab Vine is a living network of fabricated modules, embedded electronics, light,
 ## Key Resources
 
 - [Module V1 firmware](NODE-LOGIC/fab-vine-node/V1/firmware/fab-vine-node-v1/fab-vine-node-v1.ino)
+- [Node V4 firmware](NODE-LOGIC/fab-vine-node/V4/V4.ino)
+- [Node Sprint 5 workspace and LED program manual](MANUALS/node-sprint5.html)
+- [V3.5 Center Out Breath](NODE-LOGIC/fab-vine-node/V3_5_Center_Out_Breath/README.md)
+- [V3.6 Direction Calibration](NODE-LOGIC/fab-vine-node/V3_6_Direction_Calibration/README.md)
+- [V3.7 Neighbor Compass](NODE-LOGIC/fab-vine-node/V3_7_Neighbor_Compass/README.md)
+- [Node Sprint 5 3D design files](BUILD-FILES/3d-designs/fab-vine-node-sprint5/)
+- [Node Sprint 5 PCB design files](BUILD-FILES/pcb-designs/fab-vine-node-sprint5/)
 - [Node V3 firmware](NODE-LOGIC/fab-vine-node/V3/V3.ino)
 - [Node Sprint 4 integration manual](MANUALS/node-sprint4-integration.html)
 - [Node Sprint 4 3D design files](BUILD-FILES/3d-designs/fab-vine-node-sprint4/)

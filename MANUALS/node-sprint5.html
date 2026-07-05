@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node Sprint 5 | Fab Vine Manuals</title>
+  <link rel="stylesheet" href="./manuals.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Fab Vine Manuals home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Fab Vine Manuals</span>
+      </a>
+      <nav class="nav" aria-label="Manual navigation">
+        <a href="./index.html">Manual Index</a>
+        <a href="./node-sprint4-integration.html">Sprint 4</a>
+        <a href="https://github.com/FAB-VINE/fab-vine-prototype/tree/main/NODE-LOGIC/fab-vine-node/V4">V4 Code</a>
+      </nav>
+    </header>
+
+    <section class="hero compact-hero">
+      <div class="eyebrow">Node Sprint 5 / Workspace</div>
+      <h1>Next sprint space for firmware, physical design, electronics, and validation notes.</h1>
+      <p class="lead">
+        Sprint 5 starts from the V3 integration work and creates a clean space for the next iteration.
+        Use this page as the public index while the code, 3D files, PCB notes, tests, and media evolve.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Quick Access</h2>
+      <p>These folders are ready for Sprint 5 work.</p>
+      <div class="nav">
+        <a class="button primary" href="https://github.com/FAB-VINE/fab-vine-prototype/tree/main/NODE-LOGIC/fab-vine-node/V4">Open V4 Firmware Folder</a>
+        <a class="button" href="https://github.com/FAB-VINE/fab-vine-prototype/blob/main/NODE-LOGIC/fab-vine-node/V4/V4.ino">View V4 Firmware</a>
+        <a class="button" href="https://github.com/FAB-VINE/fab-vine-prototype/tree/main/BUILD-FILES/3d-designs/fab-vine-node-sprint5">Open Sprint 5 3D Files</a>
+        <a class="button" href="https://github.com/FAB-VINE/fab-vine-prototype/tree/main/BUILD-FILES/pcb-designs/fab-vine-node-sprint5">Open Sprint 5 PCB Files</a>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Sprint 5 Repository Space</h2>
+      <p>
+        The new sprint keeps each type of work in its own place so older sprint references remain stable.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Content</th><th>Location</th><th>Use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Firmware</td><td><code>NODE-LOGIC/fab-vine-node/V4/</code></td><td>Next code iteration based on V3.</td></tr>
+            <tr><td>3D design</td><td><code>BUILD-FILES/3d-designs/fab-vine-node-sprint5/</code></td><td>New physical design files, exports, and media.</td></tr>
+            <tr><td>PCB design</td><td><code>BUILD-FILES/pcb-designs/fab-vine-node-sprint5/</code></td><td>New electronics notes, pinout decisions, and fabrication packages.</td></tr>
+            <tr><td>Web manual</td><td><code>MANUALS/node-sprint5.html</code></td><td>Contributor-facing sprint index.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <h2>Starting Assumptions</h2>
+      <ul>
+        <li>V3 remains the Sprint 4 reference firmware.</li>
+        <li>V4 is the active place for new Sprint 5 code experiments.</li>
+        <li>Physical and PCB changes should be documented in their Sprint 5 build folders first.</li>
+        <li>Confirmed decisions should be summarized here as the sprint becomes clearer.</li>
+      </ul>
+    </section>
+
+    <section class="panel section">
+      <div class="eyebrow">Programming progress</div>
+      <h2>V3 LED interaction studies</h2>
+      <p>
+        Sprint 5 includes a sequence of testable programs for the 40-pixel body strip. The strip is physically
+        arranged as four groups of ten pixels on a twisted cylinder. Every group is indexed from bottom to top.
+        Each program remains in its own folder so a tested behavior can be loaded again without overwriting the others.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead>
+            <tr><th>Version</th><th>Purpose</th><th>When to use it</th><th>Files</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>V3.3 Ascending Breath</td>
+              <td>A purple, blue, and green breath rises through all four groups.</td>
+              <td>Check bottom-to-top wiring and the first independent-pixel animation.</td>
+              <td><a href="../NODE-LOGIC/fab-vine-node/V3_3_Ascending_Breath/README.md">Guide</a> · <a href="../NODE-LOGIC/fab-vine-node/V3_3_Ascending_Breath/V3_3_Ascending_Breath.ino">Arduino</a></td>
+            </tr>
+            <tr>
+              <td>V3.4 Organic Breath</td>
+              <td>Adds natural inhale, hold, exhale, rest, and a soft trailing glow.</td>
+              <td>Evaluate a less mechanical bottom-to-top breathing rhythm.</td>
+              <td><a href="../NODE-LOGIC/fab-vine-node/V3_4_Organic_Breath/README.md">Guide</a> · <a href="../NODE-LOGIC/fab-vine-node/V3_4_Organic_Breath/V3_4_Organic_Breath.ino">Arduino</a></td>
+            </tr>
+            <tr>
+              <td>V3.5 Center Out Breath</td>
+              <td>Starts at the two center LEDs and expands toward both ends.</td>
+              <td>Current aesthetic breathing reference.</td>
+              <td><a href="../NODE-LOGIC/fab-vine-node/V3_5_Center_Out_Breath/README.md">Guide</a> · <a href="../NODE-LOGIC/fab-vine-node/V3_5_Center_Out_Breath/V3_5_Center_Out_Breath.ino">Arduino</a></td>
+            </tr>
+            <tr>
+              <td>V3.6 Direction Calibration</td>
+              <td>Identifies each colored ten-pixel path and its physical orientation.</td>
+              <td>Run after assembling a new twisted cylindrical body.</td>
+              <td><a href="../NODE-LOGIC/fab-vine-node/V3_6_Direction_Calibration/README.md">Guide</a> · <a href="../NODE-LOGIC/fab-vine-node/V3_6_Direction_Calibration/V3_6_Direction_Calibration.ino">Arduino</a></td>
+            </tr>
+            <tr>
+              <td>V3.7 Neighbor Compass</td>
+              <td>Uses animated directions to show faces that still have no neighbor.</td>
+              <td>Diagnose face recognition and guide module placement.</td>
+              <td><a href="../NODE-LOGIC/fab-vine-node/V3_7_Neighbor_Compass/README.md">Guide</a> · <a href="../NODE-LOGIC/fab-vine-node/V3_7_Neighbor_Compass/V3_7_Neighbor_Compass.ino">Arduino</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <div class="eyebrow">Important calibration reference</div>
+      <h2>Direction Calibration color map</h2>
+      <p>
+        V3.6 is the physical reference for all later directional behavior. Place the module upright and look at it
+        from the display/front side. The program lights one ten-pixel group at a time and moves a bright marker
+        from bottom to top.
+      </p>
+      <div class="table-scroll">
+        <table class="bom-table">
+          <thead><tr><th>Color</th><th>Pixels</th><th>Confirmed face</th><th>Expected movement</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Red</strong></td><td>0–9</td><td>Front</td><td>Bottom to top</td></tr>
+            <tr><td><strong>Green</strong></td><td>10–19</td><td>Right</td><td>Bottom to top</td></tr>
+            <tr><td><strong>Blue</strong></td><td>20–29</td><td>Back / posterior</td><td>Bottom to top</td></tr>
+            <tr><td><strong>Purple</strong></td><td>30–39</td><td>Left</td><td>Bottom to top</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        These colors identify physical sides; they are not error states. If a future strip is mounted in another
+        orientation, repeat this calibration and correct the group mapping before loading Neighbor Compass.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>Neighbor Compass visual language</h2>
+      <ul>
+        <li>Front: the red group moves upward.</li>
+        <li>Right: the green group moves upward.</li>
+        <li>Back / posterior: the blue group moves upward.</li>
+        <li>Left: the purple group moves upward.</li>
+        <li>Top: white light moves upward through all four groups.</li>
+        <li>Bottom: white light moves downward through all four groups.</li>
+      </ul>
+      <p>
+        V3.7 cycles only through faces without a recognized neighbor. Connecting a face removes that direction
+        after the neighbor timeout; disconnecting it makes the direction return. When all faces are connected,
+        the strip returns to organic breathing.
+      </p>
+    </section>
+
+    <section class="panel section">
+      <h2>How to load a program</h2>
+      <ol>
+        <li>Open the version folder and then open the matching <code>.ino</code> file.</li>
+        <li>In Arduino IDE, select <code>XIAO ESP32C6</code> and the module's serial port.</li>
+        <li>Keep the companion <code>src/PacketCommunication.h</code> file inside the same version folder.</li>
+        <li>Install Adafruit GFX, NeoPixel, NeoMatrix, and SSD1306 libraries if Arduino reports them missing.</li>
+        <li>Compile and upload. The 40-pixel body strip data line is connected to <code>D10</code>.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>
