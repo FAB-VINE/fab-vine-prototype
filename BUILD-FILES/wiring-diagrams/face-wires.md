@@ -17,10 +17,10 @@ Thus each face needs 3 wires: shared TX (where this node broadcasts), face RX (w
 
 ## Type Red Wire (Top-Right faces)
 
-Build the tree parts: 
+1 Cut and strip thw wires: 
 - 4 pin molex with 10cm of wire
 - 3 pin female no wire
-- 3 pin male molex with 19.5cm of wire
+- 3 pin male molex with 19.5cm of wire (yellow 1cm shorter)
 
 2.1 Connect long wires coming form the same side (V shape): 
 - 4pin yellow to 3pin long (19.5cm) yellow
@@ -72,9 +72,33 @@ You should end with a cable like this:
 
 ## Type Blue Wire (Bottom-Posterior faces)
 
-Build the parts:
+1 Cut and strip wires: 
 - 4pin male molex with 6cm of wire
-- 3pin female molex with 4.5cm of wire
+- 3pin female molex with 4.5cm of wire (yellow 1cm shorter)
 - 3pin female molex
+
+1.1 Solder 3pin female molex to 4.5cm wires:
+- yellow wire to female molex first (1) pin
+- black wire to female molex second (2) pin
+- red wire to female molex third (3) pin
+
+Please check img for reference:
+![Female wire reference](img/female-header-wire-reference.png)
+
+1.2 Place insulators on the female molex with wires
+
+2.1 Connect wires coming form the same side (V shape):
+- 4pin black to 3pin short (4.5cm) yellow
+- 4pin red to 3pin short (4.5cm) black
+- 4pin white to 3pin short (4.5cm) red
+
+2.2 solder the 2.1 step wires
+
+3.1 Add insulators to the wires
+
+3.2 Solder GND y TX to female molex:
+- 4pin black to female molex first (1) pin
+- 4pin red (GND) to female molex second (2) pin
+- 4pin white to female molex third (3) pin
 
 ![Detail and measures of the right posterior face wire](img/final-type-blue-cable.png)
