@@ -5,3 +5,5 @@ dist/
 *.local
 *.3dmbak
 *.rhl
+**/.vscode/
+NODE-LOGIC/fab-vine-node/V5/sketch.yaml
