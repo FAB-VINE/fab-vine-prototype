@@ -85,7 +85,6 @@ void NodeLights::breathFromCenter(Color &color, const unsigned long deltaTime) {
     breathAnimationTime = 0;
   }
   float phase = breathAnimationTime / breathDurationMs;
-
   // breath
   float breath = 0.0f;
 

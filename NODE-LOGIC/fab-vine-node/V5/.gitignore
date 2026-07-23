@@ -1,0 +1,5 @@
+# ignore the generated binaries
+/binaries/
+
+# ignore the build artifacts
+/build/

@@ -22,20 +22,10 @@ void NeighborDetection::update(TimeInMillis currentTime)
     processFaceDetection(currentTime);
 }
 
-void NeighborDetection::sendBroadcastData(const uint8_t state)
+void NeighborDetection::sendBroadcastData(const PacketData state)
 {
-    broadcastData.state = state;
+    broadcastData = state;
     sendPackage(Serial1, broadcastData);
-}
-
-void NeighborDetection::setOnFaceConnectedCallback(FaceEventFunction callback)
-{
-    onFaceConnect = callback;
-}
-
-void NeighborDetection::setOnFaceDisconnectedCallback(FaceEventFunction callback)
-{
-    onFaceDisconnect = callback;
 }
 
 uint8_t NeighborDetection::countConnectedFaces()
@@ -70,6 +60,7 @@ void NeighborDetection::readIncomingData(TimeInMillis currentTime)
 
 void NeighborDetection::processFaceDetection(TimeInMillis currentTime)
 {
+    uint8_t connectedFaces = 0;
     for (int i = 0; i < FACE_COUNT; ++i) {
         Face face = (Face)i;
         if (!hasNeighbor[face]) continue;
@@ -79,14 +70,25 @@ void NeighborDetection::processFaceDetection(TimeInMillis currentTime)
             if(onFaceDisconnect) onFaceDisconnect(face);
             hasNeighbor[face] = false;
             lastSeen[face] = 0;
+            continue;
+        }
+        ++connectedFaces;
+
+        if(!node.positionKnown && neighborData[face].hasPos){
+            
+            Face oppositeFace = OPP_Face[face];
+
+            node.pos[0] = neighborsData[face].pos[0] + face_dir_vector[oppositeFace][0];
+            node.pos[1] = neighborsData[face].pos[1] + face_dir_vector[oppositeFace][1];
+            node.pos[2] = neighborsData[face].pos[2] + face_dir_vector[oppositeFace][2];
+
+            node.positionKnown = true;
+
+            if(onPositionFound) onPositionFound();
         }
     }
-
-    // calculate grid pos
-    if (hasNeighbor[FaceLeft]) {
-        uint8_t leftNeighbors = neighborData[FaceLeft].neighborCount[FaceLeft];
-        broadcastData.neighborCount[FaceLeft] = leftNeighbors > 0 ? leftNeighbors + 1 : 1;
-    } else {
-        broadcastData.neighborCount[FaceLeft] = 0;
+    if(connectedFaces == 0 && node.positionKnown && !node.isSeed){
+        node.positionKnown = false;
+        if(onPositionLost) onPositionLost();
     }
 }

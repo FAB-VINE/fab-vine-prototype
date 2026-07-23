@@ -3,14 +3,17 @@
 
 #include <SoftwareSerial.h>
 #include "Faces.h"
+#include "NodeState.h"
 #include "PacketCommunication.h"
 
 typedef std::function<void(Face)> FaceEventFunction;
+typedef std::function<void(void)> PositionEventFunction;
 typedef const unsigned long& TimeInMillis;
 
 struct PacketData {
   uint8_t state;
-  uint8_t neighborCount[2];
+  uint8_t hasPos; 
+  int8_t pos[3];
 };
 
 class NeighborDetection
@@ -37,7 +40,10 @@ class NeighborDetection
   // callbacks 
   FaceEventFunction onFaceDisconnect;
   FaceEventFunction onFaceConnect;
+  PositionEventFunction onPositionFound;
+  PositionEventFunction onPositionLost;
 
+  NodeState& node;
 
 public:
   const PacketData* neighborsData;
@@ -50,7 +56,8 @@ public:
     int8_t topRxPin,
     int8_t bottomRxPin,
     int8_t frontRxPin,
-    int8_t posteriorRxPin
+    int8_t posteriorRxPin,
+    NodeState& node
   )
   : SerialLeft{leftRxPin},
     SerialRight{rightRxPin},
@@ -59,13 +66,16 @@ public:
     SerialFront{frontRxPin},
     SerialPosterior{posteriorRxPin},
     neighborsData{neighborData},
-    hasNeighborConnected{hasNeighbor}
+    hasNeighborConnected{hasNeighbor},
+    node{node}
   {}
   void begin(uint32_t baud);
   void update(TimeInMillis currentTime);
-  void sendBroadcastData(uint8_t state);
-  void setOnFaceConnectedCallback(FaceEventFunction callback);
-  void setOnFaceDisconnectedCallback(FaceEventFunction callback);
+  void sendBroadcastData(PacketData state);
+  void setOnFaceConnectedCallback(FaceEventFunction callback){onFaceConnect = callback;}
+  void setOnFaceDisconnectedCallback(FaceEventFunction callback){onFaceDisconnect = callback;}
+  void setOnPositionFoundCallback(PositionEventFunction callback){onPositionFound = callback;}
+  void setOnPositionLostCallback(PositionEventFunction callback){onPositionLost = callback;}
   uint8_t countConnectedFaces();
 
 private: 

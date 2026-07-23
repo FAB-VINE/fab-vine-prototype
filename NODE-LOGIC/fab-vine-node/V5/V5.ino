@@ -1,5 +1,7 @@
 #include <SoftwareSerial.h>
 
+#include "painlessMesh.h"
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_NeoMatrix.h>
@@ -7,8 +9,10 @@
 #include <math.h>
 #include <WiFi.h>
 
-#define IS_MIRROR true
-
+#define IS_MIRROR false
+#ifndef IS_SEED
+#define IS_SEED false
+#endif
 //////// uncomment to enable USB Serial (it may halt the XIAO in not connected to a computer)
 // #define SERIAL_DEBUG 1
 
@@ -23,11 +27,19 @@
 #define DEBUG_MODE 1
 
 #include "src/Faces.h"
+#include "src/NodeState.h"
 #include "src/PacketCommunication.h"
 #include "src/NeighborDetection.h"
 #include "src/NodeLights.h"
 #include "src/NodeEyes.h"
 
+
+#define   MESH_PREFIX     "FabVineMesh"
+#define   MESH_PASSWORD   "f4bV1n3M3sh"
+#define   MESH_PORT       5555
+
+Scheduler userScheduler; // to control your personal task
+painlessMesh  mesh;
 
 #define LED_PIN 15
 //////////////// Serial port definitions ////////////////////
@@ -72,6 +84,7 @@ NodeLights nodeLights{pixels};
 
 const Color palette[3] = {{18, 92, 235}, {0, 205, 105}, {145, 38, 225}};
 
+NodeState node{IS_SEED};
 
 ///////////// Neighbors Detection /////
 NeighborDetection neighborDetection{
@@ -80,7 +93,8 @@ NeighborDetection neighborDetection{
   PIN_TOP_RX,
   PIN_BOTTOM_RX,
   PIN_FRONT_RX,
-  PIN_POSTERIOR_RX
+  PIN_POSTERIOR_RX,
+  node
 };
 
 ///////////// end Neighbors Detection /////
@@ -105,17 +119,9 @@ unsigned long expressionDuration = 0;
 
 uint8_t selfState = 0;
 
-///////////// Serial packets /////////
-
-
-
-///////////// End serial packets /////
-
-
 void setup() {
+  
 
-  //test wifi for power consumption calculations
-  // WiFi.softAP("FabVine", "12345");
 
  // initialize inbuilt LED pin as an output.
   pinMode(LED_PIN, OUTPUT);
@@ -134,6 +140,7 @@ void setup() {
   pixels.begin();
   pixels.clear();
   pixels.show();
+
 
   Wire.begin(OLED_SDA_PIN, OLED_SCL_PIN);
 
@@ -156,11 +163,37 @@ void setup() {
     Color connectedColor(0,150,0);
     nodeLights.pointToFace(face, connectedColor, 2000);
   });
+
+  neighborDetection.setOnPositionFoundCallback([](){
+    String msg = "Position known!";
+    msg += " x:";
+    msg += node.pos[0];
+    msg += " y:";
+    msg += node.pos[1]; 
+    msg += " z:";
+    msg += node.pos[2];
+    mesh.sendBroadcast( msg );
+  });
+
+  neighborDetection.setOnPositionLostCallback([](){
+    mesh.sendBroadcast("Position lost");
+  });
+  // Wifi mesh stuff
+  mesh.init( MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT );
+
+  #if IS_MIRROR
+    mesh.initOTAReceive("mirror");
+  #else
+    mesh.initOTAReceive("regular");
+  #endif
+
+  // position setup
+  if (node.isSeed) { node.positionKnown = true; node.pos[0] = node.pos[1] = node.pos[2] = 0; }
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-
+  mesh.update();
+  unsigned long currentMillis = mesh.getNodeTime() / 1000;
   // BLINK
   if (currentMillis - lastBlinkTime > blinkInterval) {
     lastBlinkTime = currentMillis;
@@ -173,7 +206,13 @@ void loop() {
     lastSendTime = currentMillis;
     DBG_PRINT(" Send state: ");
     DBG_PRINTLN(selfState);
-    neighborDetection.sendBroadcastData(selfState);
+    PacketData data;
+    data.state = selfState;
+    if(node.positionKnown){
+      data.hasPos = true;
+      memcpy(data.pos, node.pos, 3);
+    }
+    neighborDetection.sendBroadcastData(data);
   }
 
   
